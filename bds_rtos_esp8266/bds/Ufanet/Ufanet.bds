@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<BDSProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Ufanet" LastModified="2018-05-14T15:23:23.2494062+05:00">
+  <Namespace>Ufanet</Namespace>
+  <BaseGuid>f1210000-15ab-4e47-abc1-c795cad96325</BaseGuid>
+  <Profile Name="Ufanet.profile.new_profile" XMLFile="Profiles\Ufanet.profile.new_profile.xml" />
+  <Workbench>
+    <Client Name="Virtual Client" />
+    <Peripheral Name="Virtual Server" />
+  </Workbench>
+  <SavePath>I:\MCU\NRF5xx\nRF5_GEN\nRF5_SDK_12.3.0_d7731ad\examples\USER\experimental_bluetoothds_template\bds\Ufanet\Ufanet.bds</SavePath>
+  <PublishData>
+    <LastPublishDate>0</LastPublishDate>
+    <Annotations>true</Annotations>
+    <Emulation>true</Emulation>
+  </PublishData>
+</BDSProject>
