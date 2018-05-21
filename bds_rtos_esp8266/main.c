@@ -73,6 +73,12 @@
 #include "bsp.h"
 #include "bsp_btn_ble.h"
 #include "service_if.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "semphr.h"
+
 //#define NRF_LOG_MODULE_NAME "APP"
 //#include "nrf_log.h"
 //#include "nrf_log_ctrl.h"
@@ -129,6 +135,8 @@ static nrf_ble_qwr_t                     m_qwr;                                 
 // YOUR_JOB: Use UUIDs for service(s) used in your application.
 static ble_uuid_t m_adv_uuids[] = {{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}}; /**< Universally unique service identifiers. */
 
+static SemaphoreHandle_t m_ble_event_ready;  /**< Semaphore raised if there is a new event to be processed in the BLE thread. */
+static TaskHandle_t m_ble_stack_thread;      /**< Definition of BLE stack thread. */
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -439,6 +447,25 @@ static void sys_evt_dispatch(uint32_t sys_evt)
     ble_advertising_on_sys_evt(sys_evt);
 }
 
+/**
+ * @brief Event handler for new BLE events
+ *
+ * This function is called from the SoftDevice handler.
+ * It is called from interrupt level.
+ *
+ * @return The returned value is checked in the softdevice_handler module,
+ *         using the APP_ERROR_CHECK macro.
+ */
+static uint32_t ble_new_event_handler(void)
+{
+    BaseType_t yield_req = pdFALSE;
+
+    // The returned value may be safely ignored, if error is returned it only means that
+    // the semaphore is already given (raised).
+    UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_ble_event_ready, &yield_req));
+    portYIELD_FROM_ISR(yield_req);
+    return NRF_SUCCESS;
+}
 
 /**@brief Function for initializing the BLE stack.
  *
@@ -704,27 +731,21 @@ static void buttons_leds_init(bool * p_erase_bonds)
     *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
 
-
-/**@brief Function for the Power manager.
+/**@brief Thread for handling the Application's BLE Stack events.
+ *
+ * @details This thread is responsible for handling BLE Stack events sent from on_ble_evt().
+ *
+ * @param[in]   arg   Pointer used for passing some arbitrary information (context) from the
+ *                    osThreadCreate() call to the thread.
  */
-static void power_manage(void)
-{
-    uint32_t err_code = sd_app_evt_wait();
-    APP_ERROR_CHECK(err_code);
-}
-
-
-/**@brief Function for application main entry.
- */
-int main(void)
+static void ble_stack_thread(void * arg)
 {
     uint32_t err_code;
-    bool erase_bonds;
+    bool     erase_bonds;
 
-    //err_code = NRF_LOG_INIT(NULL);
-    //APP_ERROR_CHECK(err_code);
+    UNUSED_PARAMETER(arg);
 
-    // Initialize.
+		// Initialize.
     timers_init();
     buttons_leds_init(&erase_bonds);
     ble_stack_init();
@@ -744,13 +765,50 @@ int main(void)
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 
+    while (1)
+    {
+        /* Wait for event from SoftDevice */
+        while (pdFALSE == xSemaphoreTake(m_ble_event_ready, portMAX_DELAY))
+        {
+            // Just wait again in the case when INCLUDE_vTaskSuspend is not enabled
+        }
+
+        // This function gets events from the SoftDevice and processes them by calling the function
+        // registered by softdevice_ble_evt_handler_set during stack initialization.
+        // In this code ble_evt_dispatch would be called for every event found.
+        intern_softdevice_events_execute();
+    }
+}
+/**@brief Function for application main entry.
+ */
+int main(void)
+{
+    ret_code_t err_code;
+    err_code = nrf_drv_clock_init();
+    APP_ERROR_CHECK(err_code);   
+    
+		m_ble_event_ready = xSemaphoreCreateBinary();
+    if (NULL == m_ble_event_ready)
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }
+		
+    // Start execution.
+    if (pdPASS != xTaskCreate(ble_stack_thread, "BLE", 256, NULL, 2, &m_ble_stack_thread))
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }		
+		
+		/* Activate deep sleep mode */
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+
+    // Start FreeRTOS scheduler.
+    vTaskStartScheduler();
+		
     // Enter main loop.
     for (;;)
     {
-        //if (NRF_LOG_PROCESS() == false)
-        //{
-            power_manage();
-        //}
+        APP_ERROR_HANDLER(NRF_ERROR_FORBIDDEN);
     }
 }
 
