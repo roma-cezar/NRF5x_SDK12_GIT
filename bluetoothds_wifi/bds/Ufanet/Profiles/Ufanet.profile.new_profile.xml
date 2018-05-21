@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://schemas.bluetooth.org/Documents/profile.xsd"
+  name="New Profile"
+  type="Ufanet.profile.new_profile"
+  uuid="14ef9b49-8748-4d1d-9011-d6103094d256">
+  <InformativeText>
+    <Abstract />
+    <InformativeDisclaimer />
+    <Summary />
+    <Examples />
+  </InformativeText>
+  <Role
+    name="New Profile Service" />
+  <Role
+    name="New Profile Client" />
+</Profile>
