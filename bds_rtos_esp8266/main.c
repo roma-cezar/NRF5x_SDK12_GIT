@@ -91,6 +91,7 @@ static ble_uuid_t m_adv_uuids[] = {{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUI
 // FreeRTOS function prototypes
 static SemaphoreHandle_t m_ble_event_ready;  /**< Semaphore raised if there is a new event to be processed in the BLE thread. */
 static SemaphoreHandle_t m_rtc_semaphore;
+extern SemaphoreHandle_t m_uart_data_ready;
 
 static TaskHandle_t m_ble_stack_thread;      /**< Definition of BLE stack thread. */
 static TaskHandle_t m_esp_thread;      /**< Definition of ESP  thread. */
@@ -324,7 +325,7 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
             APP_ERROR_CHECK(err_code);
             break;
         case BLE_ADV_EVT_IDLE:
-            sleep_mode_enter();
+           // sleep_mode_enter();
             break;
         default:
             break;
@@ -747,8 +748,8 @@ static void ble_stack_thread(void * arg)
     APP_ERROR_CHECK(err_code);
 
 		
-		vTaskResume(m_esp_thread);
 		vTaskResume(m_rtc_thread);
+		vTaskResume(m_esp_thread);
 		
     while (1)
     {
@@ -771,6 +772,10 @@ static void esp_thread(void * arg)
     UNUSED_PARAMETER(arg);
 		vTaskSuspend(m_esp_thread);
     SEGGER_RTT_WriteString(0, "ESP task started!\r\n");
+		
+		SEGGER_RTT_WriteString(0, (const char*)(ESP8266_Init("dd-wrt","bora-bora04")));
+		SEGGER_RTT_WriteString(0, (const char*)"\r\n");
+		
 	
 	  while (1)
     {
@@ -824,8 +829,12 @@ int main(void)
     err_code = nrf_drv_clock_init();
     APP_ERROR_CHECK(err_code);   
     
+	
+		ESP8266_Serial_Config(115200UL);
+
 		m_ble_event_ready = xSemaphoreCreateBinary();
 		m_rtc_semaphore = xSemaphoreCreateBinary();
+		m_uart_data_ready = xSemaphoreCreateBinary();
 	
     if (NULL == m_ble_event_ready)
     {
