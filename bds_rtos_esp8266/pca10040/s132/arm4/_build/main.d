@@ -13,6 +13,11 @@
 .\_build\main.o: ..\..\..\..\..\..\components\device\nrf51_to_nrf52.h
 .\_build\main.o: ..\..\..\..\..\..\components\device\nrf52_name_change.h
 .\_build\main.o: ..\..\..\..\..\..\components\device\compiler_abstraction.h
+.\_build\main.o: ..\..\..\..\..\..\components\boards\boards.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_gpio.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_peripherals.h
+.\_build\main.o: ..\..\..\..\..\..\components\device\nrf52832_peripherals.h
+.\_build\main.o: ..\..\..\..\..\..\components\libraries\util\nrf_assert.h
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\util\app_error.h
 .\_build\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\_build\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
@@ -20,6 +25,8 @@
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_error.h
 .\_build\main.o: ..\config\sdk_config.h
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\util\app_error_weak.h
+.\_build\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\_build\main.o: ..\..\..\..\..\..\components\boards\pca10040.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble_ranges.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble_types.h
@@ -36,13 +43,6 @@
 .\_build\main.o: ..\..\..\..\..\..\components\ble\common\ble_advdata.h
 .\_build\main.o: ..\..\..\..\..\..\components\ble\ble_advertising\ble_advertising.h
 .\_build\main.o: ..\..\..\..\..\..\components\ble\common\ble_conn_params.h
-.\_build\main.o: ..\..\..\..\..\..\components\boards\boards.h
-.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_gpio.h
-.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_peripherals.h
-.\_build\main.o: ..\..\..\..\..\..\components\device\nrf52832_peripherals.h
-.\_build\main.o: ..\..\..\..\..\..\components\libraries\util\nrf_assert.h
-.\_build\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\_build\main.o: ..\..\..\..\..\..\components\boards\pca10040.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\common\softdevice_handler\softdevice_handler.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_sdm.h
 .\_build\main.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_soc.h
@@ -71,7 +71,10 @@
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\bsp\bsp.h
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\button\app_button.h
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\bsp\bsp_btn_ble.h
+.\_build\main.o: ..\..\..\..\..\..\components\ble\nrf_ble_qwr\nrf_ble_qwr.h
+.\_build\main.o: ..\..\..\main.h
 .\_build\main.o: ..\..\..\bds\service_if.h
+.\_build\main.o: ..\..\..\..\..\..\components\ble\ble_services\ble_bas\ble_bas.h
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\source\include\FreeRTOS.h
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\config\FreeRTOSConfig.h
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\source\include\projdefs.h
@@ -85,7 +88,8 @@
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\source\include\timers.h
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\source\include\semphr.h
 .\_build\main.o: ..\..\..\..\..\..\external\freertos\source\include\queue.h
-.\_build\main.o: ..\..\..\..\..\..\components\ble\nrf_ble_qwr\nrf_ble_qwr.h
 .\_build\main.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT.h
 .\_build\main.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT_Conf.h
-.\_build\main.o: ..\..\..\..\..\..\components\ble\ble_services\ble_bas\ble_bas.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\rtc\nrf_drv_rtc.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\common\nrf_drv_common.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_rtc.h

@@ -56,6 +56,7 @@
 #include <string.h>
 #include "nordic_common.h"
 #include "nrf.h"
+#include "boards.h"
 #include "app_error.h"
 #include "ble.h"
 #include "ble_hci.h"
@@ -63,7 +64,6 @@
 #include "ble_advdata.h"
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
-#include "boards.h"
 #include "softdevice_handler.h"
 #include "app_timer.h"
 #include "peer_manager.h"
@@ -72,71 +72,39 @@
 #include "ble_conn_state.h"
 #include "bsp.h"
 #include "bsp_btn_ble.h"
-#include "service_if.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "semphr.h"
-
-//#define NRF_LOG_MODULE_NAME "APP"
-//#include "nrf_log.h"
-//#include "nrf_log_ctrl.h"
 #include "nrf_ble_qwr.h"
 
-#include "SEGGER_RTT.h"
-#include "SEGGER_RTT_Conf.h"
+#include "main.h"
 
-#include "ble_bas.h" 
+#include "nrf_drv_rtc.h"
 
 extern ble_bas_t    m_bas; 
 
-#define IS_SRVC_CHANGED_CHARACT_PRESENT  1                                          /**< Include or not the service_changed characteristic. if not enabled, the server's database cannot be changed for the lifetime of the device*/
-
-#if (NRF_SD_BLE_API_VERSION == 3)
-#define NRF_BLE_MAX_MTU_SIZE             GATT_MTU_SIZE_DEFAULT                      /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
-#endif
-
-#define CENTRAL_LINK_COUNT               0                                          /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
-#define PERIPHERAL_LINK_COUNT            1                                          /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
-
-#define DEVICE_NAME                      "Nordic_BDS"                               /**< Name of device. Will be included in the advertising data. */
-#define MANUFACTURER_NAME                "NordicSemiconductor"                      /**< Manufacturer. Will be passed to Device Information Service. */
-#define APP_ADV_INTERVAL                 300                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS       180                                        /**< The advertising timeout in units of seconds. */
-
-#define APP_TIMER_PRESCALER              0                                          /**< Value of the RTC1 PRESCALER register. */
-#define APP_TIMER_OP_QUEUE_SIZE          4                                          /**< Size of timer operation queues. */
-
-#define MIN_CONN_INTERVAL                MSEC_TO_UNITS(100, UNIT_1_25_MS)           /**< Minimum acceptable connection interval (0.1 seconds). */
-#define MAX_CONN_INTERVAL                MSEC_TO_UNITS(200, UNIT_1_25_MS)           /**< Maximum acceptable connection interval (0.2 second). */
-#define SLAVE_LATENCY                    0                                          /**< Slave latency. */
-#define CONN_SUP_TIMEOUT                 MSEC_TO_UNITS(4000, UNIT_10_MS)            /**< Connection supervisory timeout (4 seconds). */
-
-#define FIRST_CONN_PARAMS_UPDATE_DELAY   APP_TIMER_TICKS(5000, APP_TIMER_PRESCALER) /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (5 seconds). */
-#define NEXT_CONN_PARAMS_UPDATE_DELAY    APP_TIMER_TICKS(30000, APP_TIMER_PRESCALER)/**< Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds). */
-#define MAX_CONN_PARAMS_UPDATE_COUNT     3                                          /**< Number of attempts before giving up the connection parameter negotiation. */
-
-#define SEC_PARAM_BOND                   1                                          /**< Perform bonding. */
-#define SEC_PARAM_MITM                   0                                          /**< Man In The Middle protection not required. */
-#define SEC_PARAM_LESC                   0                                          /**< LE Secure Connections not enabled. */
-#define SEC_PARAM_KEYPRESS               0                                          /**< Keypress notifications not enabled. */
-#define SEC_PARAM_IO_CAPABILITIES        BLE_GAP_IO_CAPS_NONE                       /**< No I/O capabilities. */
-#define SEC_PARAM_OOB                    0                                          /**< Out Of Band data not available. */
-#define SEC_PARAM_MIN_KEY_SIZE           7                                          /**< Minimum encryption key size. */
-#define SEC_PARAM_MAX_KEY_SIZE           16                                         /**< Maximum encryption key size. */
-
-#define DEAD_BEEF                        0xDEADBEEF                                 /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 static uint16_t                          m_conn_handle = BLE_CONN_HANDLE_INVALID;   /**< Handle of the current connection. */
 static nrf_ble_qwr_t                     m_qwr;                                     /**< Queued Writes structure.*/
 
-
 // YOUR_JOB: Use UUIDs for service(s) used in your application.
 static ble_uuid_t m_adv_uuids[] = {{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}}; /**< Universally unique service identifiers. */
 
+
+// FreeRTOS function prototypes
 static SemaphoreHandle_t m_ble_event_ready;  /**< Semaphore raised if there is a new event to be processed in the BLE thread. */
+static SemaphoreHandle_t m_rtc_semaphore;
+
 static TaskHandle_t m_ble_stack_thread;      /**< Definition of BLE stack thread. */
+static TaskHandle_t m_esp_thread;      /**< Definition of ESP  thread. */
+static TaskHandle_t m_rtc_thread;			/**< Definition of RTC  thread. */
+static TimerHandle_t m_battery_timer;        /**< Definition of battery timer. */
+
+
+#define BLINK_RTC 2
+#define BLINK_RTC_CC 0
+#define BLINK_RTC_TICKS   (RTC_US_TO_TICKS(5000000ULL, RTC_DEFAULT_CONFIG_FREQUENCY))
+
+static nrf_drv_rtc_config_t const m_rtc_config = NRF_DRV_RTC_DEFAULT_CONFIG;
+static nrf_drv_rtc_t const m_rtc = NRF_DRV_RTC_INSTANCE(BLINK_RTC);
+
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -169,6 +137,12 @@ static void fds_evt_handler(fds_evt_t const * const p_evt)
     }
 }
 
+static void battery_level_meas_timeout_handler(TimerHandle_t xTimer)
+{
+    UNUSED_PARAMETER(xTimer);
+
+		bsp_board_led_invert(BSP_BOARD_LED_2);
+}
 
 /**@brief Function for the Timer initialization.
  *
@@ -179,9 +153,12 @@ static void timers_init(void)
 
     // Initialize timer module.
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
-
     // Create timers.
-
+		m_battery_timer = xTimerCreate("BATT",
+                                   1000,
+                                   pdTRUE,
+                                   NULL,
+                                   battery_level_meas_timeout_handler);
     /* YOUR_JOB: Create any timers to be used by the application.
                  Below is an example of how to create a timer.
     uint32_t err_code;
@@ -303,10 +280,10 @@ static void conn_params_init(void)
 */
 static void application_timers_start(void)
 {
-    /* YOUR_JOB: Start your timers. below is an example of how to start a timer.
-    uint32_t err_code;
-    err_code = app_timer_start(m_app_timer_id, TIMER_INTERVAL, NULL);
-    APP_ERROR_CHECK(err_code); */
+    if (pdPASS != xTimerStart(m_battery_timer, OSTIMER_WAIT_FOR_QUEUE))
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }
 }
 
 
@@ -515,6 +492,10 @@ void bsp_event_handler(bsp_event_t event)
     uint32_t err_code;
     switch (event)
     {
+				case BSP_EVENT_KEY_1:
+            SEGGER_RTT_WriteString(0, "BSP_EVENT_KEY_1 \r\n");
+            break;
+			
         case BSP_EVENT_SLEEP:
             sleep_mode_enter();
             break;
@@ -765,6 +746,10 @@ static void ble_stack_thread(void * arg)
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 
+		
+		vTaskResume(m_esp_thread);
+		vTaskResume(m_rtc_thread);
+		
     while (1)
     {
         /* Wait for event from SoftDevice */
@@ -779,6 +764,58 @@ static void ble_stack_thread(void * arg)
         intern_softdevice_events_execute();
     }
 }
+
+static void esp_thread(void * arg)
+{
+	  uint32_t err_code;
+    UNUSED_PARAMETER(arg);
+		vTaskSuspend(m_esp_thread);
+    SEGGER_RTT_WriteString(0, "ESP task started!\r\n");
+	
+	  while (1)
+    {
+			bsp_board_led_invert(BSP_BOARD_LED_1);
+			vTaskDelay(100);
+		}
+}
+
+static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
+{
+    BaseType_t yield_req = pdFALSE;
+    ret_code_t err_code;
+    err_code = nrf_drv_rtc_cc_set(
+        &m_rtc,
+        BLINK_RTC_CC,
+        (nrf_rtc_cc_get(m_rtc.p_reg, BLINK_RTC_CC) + BLINK_RTC_TICKS) & RTC_COUNTER_COUNTER_Msk,
+        true);
+    APP_ERROR_CHECK(err_code);
+
+   /* The returned value may be safely ignored, if error is returned it only means that
+    * the semaphore is already given (raised). */
+   UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_rtc_semaphore, &yield_req));
+   portYIELD_FROM_ISR(yield_req);
+}
+
+static void rtc_thread(void * arg)
+{
+	  uint32_t err_code;
+    UNUSED_PARAMETER(arg);
+		vTaskSuspend(m_rtc_thread);
+    SEGGER_RTT_WriteString(0, "RTC task started!\r\n");
+	
+		err_code = nrf_drv_rtc_init(&m_rtc, &m_rtc_config, rtc_handler);
+    APP_ERROR_CHECK(err_code);
+    err_code = nrf_drv_rtc_cc_set(&m_rtc, BLINK_RTC_CC, BLINK_RTC_TICKS, true);
+    APP_ERROR_CHECK(err_code);
+    nrf_drv_rtc_enable(&m_rtc);
+	
+	  while (1)
+    {
+			bsp_board_led_invert(BSP_BOARD_LED_3);
+      /* Wait for the event from the RTC */
+      UNUSED_RETURN_VALUE(xSemaphoreTake(m_rtc_semaphore, portMAX_DELAY));
+		}
+}
 /**@brief Function for application main entry.
  */
 int main(void)
@@ -788,6 +825,8 @@ int main(void)
     APP_ERROR_CHECK(err_code);   
     
 		m_ble_event_ready = xSemaphoreCreateBinary();
+		m_rtc_semaphore = xSemaphoreCreateBinary();
+	
     if (NULL == m_ble_event_ready)
     {
         APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
@@ -798,6 +837,16 @@ int main(void)
     {
         APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
     }		
+		
+    if (pdPASS != xTaskCreate(esp_thread, "ESP", 256, NULL, 3, &m_esp_thread))
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }		
+		
+		if (pdPASS != xTaskCreate(rtc_thread, "RTC", 256, NULL, 4, &m_rtc_thread))
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }	
 		
 		/* Activate deep sleep mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;

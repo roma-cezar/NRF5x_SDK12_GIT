@@ -29,6 +29,7 @@
 ".\_build\nrf_drv_clock.o"
 ".\_build\nrf_drv_common.o"
 ".\_build\nrf_drv_gpiote.o"
+".\_build\nrf_drv_rtc.o"
 ".\_build\app_button.o"
 ".\_build\app_error.o"
 ".\_build\app_error_weak.o"
@@ -56,6 +57,7 @@
 ".\_build\tasks.o"
 ".\_build\timers.o"
 ".\_build\heap_1.o"
+".\_build\esp8266.o"
 --library_type=microlib --strict --scatter ".\_build\nrf52832_xxaa.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
