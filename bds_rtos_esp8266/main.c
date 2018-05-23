@@ -76,7 +76,6 @@
 
 #include "main.h"
 
-#include "nrf_drv_rtc.h"
 
 extern ble_bas_t    m_bas; 
 
@@ -769,18 +768,28 @@ static void ble_stack_thread(void * arg)
 static void esp_thread(void * arg)
 {
 	  uint32_t err_code;
+		uint8_t get_request[256];
+		uint8_t i = 0;
     UNUSED_PARAMETER(arg);
 		vTaskSuspend(m_esp_thread);
     SEGGER_RTT_WriteString(0, "ESP task started!\r\n");
 		
-		SEGGER_RTT_WriteString(0, (const char*)(ESP8266_Init("dd-wrt","bora-bora04")));
+		SEGGER_RTT_WriteString(0, (const char*)(ESP8266_Wlan_Start("dd-wrt","bora-bora04")));
 		SEGGER_RTT_WriteString(0, (const char*)"\r\n");
 		
 	
+		ESP8266_Session_Open("SSL", "192.168.1.252", 9443);
+		//ESP8266_Session_Send("Hello!\r\n");
+		//ESP8266_Session_Close();
+	
 	  while (1)
     {
+			i++;
+			memset(get_request, 0 , 256);
+			sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V0?value=%d", i);
+			ESP8266_GET_Req(get_request);
 			bsp_board_led_invert(BSP_BOARD_LED_1);
-			vTaskDelay(100);
+			vTaskDelay(2000);
 		}
 }
 

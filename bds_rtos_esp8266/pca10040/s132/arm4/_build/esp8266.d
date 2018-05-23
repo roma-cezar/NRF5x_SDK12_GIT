@@ -1,4 +1,4 @@
-.\_build\esp8266.o: ..\..\..\..\..\..\..\..\My_Libs\ESP8266\esp8266.c
+.\_build\esp8266.o: ..\..\..\..\..\..\..\..\MyLibs\ESP8266\esp8266.c
 .\_build\esp8266.o: ..\..\..\..\..\..\components\device\nrf52.h
 .\_build\esp8266.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
 .\_build\esp8266.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -34,7 +34,7 @@
 .\_build\esp8266.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_svc.h
 .\_build\esp8266.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_error_soc.h
 .\_build\esp8266.o: ..\..\..\..\..\..\components\softdevice\s132\headers\nrf_nvic.h
-.\_build\esp8266.o: ..\..\..\..\..\..\..\..\My_Libs\ESP8266\ESP8266.h
+.\_build\esp8266.o: ..\..\..\..\..\..\..\..\MyLibs\ESP8266\esp8266.h
 .\_build\esp8266.o: ..\..\..\..\..\..\external\freertos\source\include\FreeRTOS.h
 .\_build\esp8266.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\_build\esp8266.o: ..\..\..\..\..\..\external\freertos\config\FreeRTOSConfig.h
