@@ -1,0 +1,17 @@
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\libraries\util\sdk_mapped_flags.c
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\libraries\util\sdk_mapped_flags.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\libraries\util\app_util.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\compiler_abstraction.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\nrf.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\nrf52.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm4_simd.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\toolchain\system_nrf52.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\nrf52_bitfields.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\nrf51_to_nrf52.h
+.\_build\sdk_mapped_flags.o: ..\..\..\..\..\..\components\device\nrf52_name_change.h
+.\_build\sdk_mapped_flags.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
