@@ -89,7 +89,8 @@ static ble_uuid_t m_adv_uuids[] = {{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUI
 
 // FreeRTOS function prototypes
 static SemaphoreHandle_t m_ble_event_ready;  /**< Semaphore raised if there is a new event to be processed in the BLE thread. */
-static SemaphoreHandle_t m_rtc_semaphore;
+static SemaphoreHandle_t m_rtc_ready;
+static SemaphoreHandle_t m_get_req_ready;
 extern SemaphoreHandle_t m_uart_data_ready;
 
 static TaskHandle_t m_ble_stack_thread;      /**< Definition of BLE stack thread. */
@@ -155,7 +156,7 @@ static void timers_init(void)
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
     // Create timers.
 		m_battery_timer = xTimerCreate("BATT",
-                                   1000,
+                                   100,
                                    pdTRUE,
                                    NULL,
                                    battery_level_meas_timeout_handler);
@@ -293,16 +294,19 @@ static void application_timers_start(void)
  */
 static void sleep_mode_enter(void)
 {
-    uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-    APP_ERROR_CHECK(err_code);
+	uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+	APP_ERROR_CHECK(err_code);
 
-    // Prepare wakeup buttons.
-    err_code = bsp_btn_ble_sleep_mode_prepare();
-    APP_ERROR_CHECK(err_code);
+	// Prepare wakeup buttons.
+	err_code = bsp_btn_ble_sleep_mode_prepare();
+	APP_ERROR_CHECK(err_code);
 
-    // Go to system-off mode (this function will not return; wakeup will cause a reset).
-    err_code = sd_power_system_off();
-    APP_ERROR_CHECK(err_code);
+	xTimerStop(m_battery_timer, 0xffff); 
+	vTaskSuspendAll();
+
+  // Go to system-off mode (this function will not return; wakeup will cause a reset).
+	err_code = sd_power_system_off();
+	APP_ERROR_CHECK(err_code);
 }
 
 
@@ -324,7 +328,7 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
             APP_ERROR_CHECK(err_code);
             break;
         case BLE_ADV_EVT_IDLE:
-           // sleep_mode_enter();
+            sleep_mode_enter();
             break;
         default:
             break;
@@ -489,11 +493,14 @@ static void ble_stack_init(void)
  */
 void bsp_event_handler(bsp_event_t event)
 {
+		BaseType_t yield_req = pdFALSE;
     uint32_t err_code;
     switch (event)
     {
 				case BSP_EVENT_KEY_1:
             SEGGER_RTT_WriteString(0, "BSP_EVENT_KEY_1 \r\n");
+					  UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_get_req_ready, &yield_req));
+					  
             break;
 			
         case BSP_EVENT_SLEEP:
@@ -522,6 +529,7 @@ void bsp_event_handler(bsp_event_t event)
         default:
             break;
     }
+		portYIELD_FROM_ISR(yield_req);
 }
 
 
@@ -667,30 +675,7 @@ static void peer_manager_init(bool erase_bonds)
 }
 
 
-/**@brief Function for initializing the Advertising functionality.
- */
-static void advertising_init(void)
-{
-    uint32_t      err_code;
-    ble_advdata_t advdata;
 
-    // Build advertising data struct to pass into @ref ble_advertising_init.
-    memset(&advdata, 0, sizeof(advdata));
-
-    advdata.name_type               = BLE_ADVDATA_FULL_NAME;
-    advdata.include_appearance      = true;
-    advdata.flags                   = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
-    advdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
-    advdata.uuids_complete.p_uuids  = m_adv_uuids;
-
-    ble_adv_modes_config_t options = {0};
-    options.ble_adv_fast_enabled  = true;
-    options.ble_adv_fast_interval = APP_ADV_INTERVAL;
-    options.ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
-
-    err_code = ble_advertising_init(&advdata, NULL, &options, on_adv_evt, NULL);
-    APP_ERROR_CHECK(err_code);
-}
 
 
 /**@brief Function for initializing buttons and leds.
@@ -736,7 +721,7 @@ static void ble_stack_thread(void * arg)
         SEGGER_RTT_WriteString(0, "Bonds erased!\r\n");
     }
     gap_params_init();
-    advertising_init();
+    advertising_init(APP_ADV_INTERVAL_MAX);
     services_init();
     conn_params_init();
 
@@ -778,16 +763,17 @@ static void esp_thread(void * arg)
 		SEGGER_RTT_WriteString(0, (const char*)"\r\n");
 		
 	
-		ESP8266_Session_Open("SSL", "192.168.1.252", 9443);
-		//ESP8266_Session_Send("Hello!\r\n");
-		//ESP8266_Session_Close();
-	
 	  while (1)
     {
+			UNUSED_RETURN_VALUE(xSemaphoreTake(m_get_req_ready, portMAX_DELAY));
 			i++;
 			memset(get_request, 0 , 256);
 			sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V0?value=%d", i);
+			
+			ESP8266_Session_Open("SSL", "192.168.1.252", 9443);
 			ESP8266_GET_Req(get_request);
+			ESP8266_Session_Close();
+			
 			bsp_board_led_invert(BSP_BOARD_LED_1);
 			vTaskDelay(2000);
 		}
@@ -806,7 +792,7 @@ static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 
    /* The returned value may be safely ignored, if error is returned it only means that
     * the semaphore is already given (raised). */
-   UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_rtc_semaphore, &yield_req));
+   UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_rtc_ready, &yield_req));
    portYIELD_FROM_ISR(yield_req);
 }
 
@@ -827,7 +813,7 @@ static void rtc_thread(void * arg)
     {
 			bsp_board_led_invert(BSP_BOARD_LED_3);
       /* Wait for the event from the RTC */
-      UNUSED_RETURN_VALUE(xSemaphoreTake(m_rtc_semaphore, portMAX_DELAY));
+      UNUSED_RETURN_VALUE(xSemaphoreTake(m_rtc_ready, portMAX_DELAY));
 		}
 }
 /**@brief Function for application main entry.
@@ -838,12 +824,12 @@ int main(void)
     err_code = nrf_drv_clock_init();
     APP_ERROR_CHECK(err_code);   
     
-	
 		ESP8266_Serial_Config(115200UL);
 
 		m_ble_event_ready = xSemaphoreCreateBinary();
-		m_rtc_semaphore = xSemaphoreCreateBinary();
+		m_rtc_ready = xSemaphoreCreateBinary();
 		m_uart_data_ready = xSemaphoreCreateBinary();
+		m_get_req_ready = xSemaphoreCreateBinary();
 	
     if (NULL == m_ble_event_ready)
     {
@@ -879,6 +865,30 @@ int main(void)
     }
 }
 
+/**@brief Function for initializing the Advertising functionality.
+ */
+ void advertising_init(uint16_t interval)
+{
+    uint32_t      err_code;
+    ble_advdata_t advdata;
+
+    // Build advertising data struct to pass into @ref ble_advertising_init.
+    memset(&advdata, 0, sizeof(advdata));
+
+    advdata.name_type               = BLE_ADVDATA_FULL_NAME;
+    advdata.include_appearance      = true;
+    advdata.flags                   = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
+    advdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
+    advdata.uuids_complete.p_uuids  = m_adv_uuids;
+
+    ble_adv_modes_config_t options = {0};
+    options.ble_adv_fast_enabled  = true;
+    options.ble_adv_fast_interval = interval;
+    options.ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
+
+    err_code = ble_advertising_init(&advdata, NULL, &options, on_adv_evt, NULL);
+    APP_ERROR_CHECK(err_code);
+}
 /**
  * @}
  */
