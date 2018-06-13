@@ -73,6 +73,7 @@
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\bsp\bsp_btn_ble.h
 .\_build\main.o: ..\..\..\bds\service_if.h
 .\_build\main.o: ..\..\..\..\..\..\components\ble\nrf_ble_qwr\nrf_ble_qwr.h
+.\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\delay\nrf_delay.h
 .\_build\main.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT.h
 .\_build\main.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT_Conf.h
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\gpiote\nrf_drv_gpiote.h
@@ -81,4 +82,16 @@
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\common\nrf_drv_common.h
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_rtc.h
 .\_build\main.o: ..\..\..\..\..\..\components\ble\ble_services\ble_bas\ble_bas.h
+.\_build\main.o: ..\..\..\bds\ble_water_meter.h
+.\_build\main.o: ..\..\..\..\..\..\components\libraries\util\app_util_bds.h
+.\_build\main.o: ..\..\..\bds\ble_wlan.h
 .\_build\main.o: ..\..\..\..\..\..\..\..\MyLibs\ESP8266\esp8266.h
+.\_build\main.o: ..\..\..\..\..\..\..\..\MyLibs\FLASH.h
+.\_build\main.o: ..\..\..\..\..\..\external\fatfs\src\ff.h
+.\_build\main.o: ..\..\..\..\..\..\external\fatfs\src\integer.h
+.\_build\main.o: ..\..\..\..\..\..\external\fatfs\src\ffconf.h
+.\_build\main.o: ..\..\..\..\..\..\external\fatfs\port\diskio_blkdev.h
+.\_build\main.o: ..\..\..\..\..\..\external\fatfs\src\diskio.h
+.\_build\main.o: ..\..\..\..\..\..\components\libraries\block_dev\nrf_block_dev.h
+.\_build\main.o: ..\..\..\..\..\..\components\libraries\block_dev\sdc\nrf_block_dev_sdc.h
+.\_build\main.o: ..\..\..\..\..\..\components\libraries\sdcard\app_sdcard.h

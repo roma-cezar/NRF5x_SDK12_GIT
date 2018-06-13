@@ -2,14 +2,132 @@
 
 #include "service_if.h"
 #include <stdint.h>
-
-#include "SEGGER_RTT.h"
-#include "SEGGER_RTT_Conf.h"
-
+#include "ble_water_meter.h" 
+#include "ble_wlan.h" 
 #include "ble_bas.h" 
+#include "ble_dis.h" 
+#include "SEGGER_RTT.h"
+#include "FLASH.h"
 
-static ble_bas_t    m_bas; 
+ble_water_meter_t    m_water_meter; 
+ble_wlan_t    m_wlan; 
+ble_bas_t    m_bas; 
+ble_dis_t    m_dis; 
+extern bool hot_water_notify_flag;
+extern bool cold_water_notify_flag;
+extern bool wlan_update_flag;
+extern uint8_t SSID[16];
+extern uint8_t PSWD[16];
+extern uint32_t counter1;
+extern uint32_t counter2;
 
+uint8_t	m_dis_ieee_11073_20601_regulatory_certification_data_list_initial_value_data_arr[1]; 
+
+
+/**@brief Function for handling the Water meter events.
+ *
+ * @details This function will be called for all Water meter events which are passed to
+ *          the application.
+ *
+ * @param[in]   p_water_meter   Water meter structure.
+ * @param[in]   p_evt   Event received from the Water meter.
+ */
+static void on_water_meter_evt(ble_water_meter_t * p_water_meter, ble_water_meter_evt_t * p_evt)
+{
+    switch (p_evt->evt_type)
+    { 
+        case BLE_WATER_METER_HOT_WATER_EVT_NOTIFICATION_ENABLED:
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_HOT_WATER evt NOTIFICATION_ENABLED. \r\n");
+            break;
+        case BLE_WATER_METER_HOT_WATER_EVT_NOTIFICATION_DISABLED:
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_HOT_WATER evt NOTIFICATION_DISABLED. \r\n");
+            break;
+        case BLE_WATER_METER_HOT_WATER_EVT_CCCD_WRITE:
+						hot_water_notify_flag=!hot_water_notify_flag;
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_HOT_WATER evt CCCD_WRITE. \r\n");
+            break; 
+        case BLE_WATER_METER_HOT_WATER_EVT_WRITE:
+						counter1 = p_evt->params.hot_water.meters_per_cube;
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_HOT_WATER evt WRITE. \r\n");
+            break; 
+        case BLE_WATER_METER_COLD_WATER_EVT_NOTIFICATION_ENABLED:
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_COLD_WATER evt NOTIFICATION_ENABLED. \r\n");
+            break;
+        case BLE_WATER_METER_COLD_WATER_EVT_NOTIFICATION_DISABLED:
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_COLD_WATER evt NOTIFICATION_DISABLED. \r\n");
+            break;
+        case BLE_WATER_METER_COLD_WATER_EVT_CCCD_WRITE:
+						cold_water_notify_flag = !cold_water_notify_flag;
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_COLD_WATER evt CCCD_WRITE. \r\n");
+            break; 
+        case BLE_WATER_METER_COLD_WATER_EVT_WRITE:
+						counter2 = p_evt->params.cold_water.meters_per_cube;
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WATER_METER_COLD_WATER evt WRITE. \r\n");
+            break; 
+        default:
+            // No implementation needed.
+            break;
+    }
+}
+
+
+/**@brief Function for handling the WLAN events.
+ *
+ * @details This function will be called for all WLAN events which are passed to
+ *          the application.
+ *
+ * @param[in]   p_wlan   WLAN structure.
+ * @param[in]   p_evt   Event received from the WLAN.
+ */
+static void on_wlan_evt(ble_wlan_t * p_wlan, ble_wlan_evt_t * p_evt)
+{
+    switch (p_evt->evt_type)
+    { 
+        case BLE_WLAN_WLAN_SSID_EVT_WRITE:
+						memset(SSID, 0 , 16);
+						memcpy(SSID, p_evt->params.wlan_ssid.ssid.p_str, p_evt->params.wlan_ssid.ssid.length);
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WLAN_WLAN_SSID evt WRITE. \r\n");
+            break; 
+        case BLE_WLAN_WLAN_PASS_EVT_WRITE:
+						memset(PSWD, 0 , 16);
+						memcpy(PSWD, p_evt->params.wlan_pass.pass.p_str, p_evt->params.wlan_pass.pass.length);
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WLAN_WLAN_PASS evt WRITE. \r\n");
+            break; 
+        case BLE_WLAN_WLAN_ACTION_EVT_WRITE:
+						if(p_evt->params.wlan_action.action == 1)
+						{
+							wlan_update_flag = true;
+						}
+						else
+						{
+							wlan_update_flag = false;
+						}
+            SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: WLAN_WLAN_ACTION evt WRITE. \r\n");
+            break; 
+        default:
+            // No implementation needed.
+            break;
+    }
+}
+
+
+/**@brief Function for handling the Device Information events.
+ *
+ * @details This function will be called for all Device Information events which are passed to
+ *          the application.
+ *
+ * @param[in]   p_device_information   Device Information structure.
+ * @param[in]   p_evt   Event received from the Device Information.
+ */
+static void on_dis_evt(ble_dis_t * p_dis, ble_dis_evt_t * p_evt)
+{
+    switch (p_evt->evt_type)
+    { 
+        default:
+            // No implementation needed.
+            break;
+    }
+}
 
 
 /**@brief Function for handling the Battery Service events.
@@ -25,7 +143,6 @@ static void on_bas_evt(ble_bas_t * p_bas, ble_bas_evt_t * p_evt)
     switch (p_evt->evt_type)
     { 
         case BLE_BAS_BATTERY_LEVEL_EVT_NOTIFICATION_ENABLED:
-					
             SEGGER_RTT_WriteString(0, "[Bluetooth_IF]: BAS_BATTERY_LEVEL evt NOTIFICATION_ENABLED. \r\n");
             break;
         case BLE_BAS_BATTERY_LEVEL_EVT_NOTIFICATION_DISABLED:
@@ -49,8 +166,79 @@ static void on_bas_evt(ble_bas_t * p_bas, ble_bas_evt_t * p_evt)
 uint32_t bluetooth_init(void)
 {
     uint32_t    err_code; 
+    ble_water_meter_init_t    water_meter_init; 
+    ble_wlan_init_t    wlan_init; 
+    ble_dis_init_t    dis_init; 
     ble_bas_init_t    bas_init; 
     
+
+    // Initialize Water meter.
+    memset(&water_meter_init, 0, sizeof(water_meter_init));
+
+    water_meter_init.evt_handler = on_water_meter_evt; 
+    memset(&water_meter_init.ble_water_meter_hot_water_initial_value.meters_per_cube,
+           0x00,
+           sizeof(water_meter_init.ble_water_meter_hot_water_initial_value.meters_per_cube));
+    memset(&water_meter_init.ble_water_meter_cold_water_initial_value.meters_per_cube,
+           0x00,
+           sizeof(water_meter_init.ble_water_meter_cold_water_initial_value.meters_per_cube));
+
+    err_code = ble_water_meter_init(&m_water_meter, &water_meter_init);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    } 
+
+    // Initialize WLAN.
+    memset(&wlan_init, 0, sizeof(wlan_init));
+
+    wlan_init.evt_handler = on_wlan_evt; 
+    ble_srv_ascii_to_utf8(&wlan_init.ble_wlan_wlan_ssid_initial_value.ssid, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&wlan_init.ble_wlan_wlan_pass_initial_value.pass, "INITIAL VALUE"); 
+    memset(&wlan_init.ble_wlan_wlan_action_initial_value.action,
+           0x00,
+           sizeof(wlan_init.ble_wlan_wlan_action_initial_value.action));
+
+    err_code = ble_wlan_init(&m_wlan, &wlan_init);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    } 
+
+    // Initialize Device Information.
+    memset(&dis_init, 0, sizeof(dis_init));
+
+    dis_init.evt_handler = on_dis_evt; 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_manufacturer_name_string_initial_value.manufacturer_name, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_model_number_string_initial_value.model_number, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_serial_number_string_initial_value.serial_number, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_hardware_revision_string_initial_value.hardware_revision, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_firmware_revision_string_initial_value.firmware_revision, "INITIAL VALUE"); 
+    ble_srv_ascii_to_utf8(&dis_init.ble_dis_software_revision_string_initial_value.software_revision, "INITIAL VALUE"); 
+    memset(&dis_init.ble_dis_system_id_initial_value.manufacturer_identifier,
+           0x00,
+           sizeof(dis_init.ble_dis_system_id_initial_value.manufacturer_identifier));
+    memset(&dis_init.ble_dis_system_id_initial_value.organizationally_unique_identifier,
+           0x00,
+           sizeof(dis_init.ble_dis_system_id_initial_value.organizationally_unique_identifier));
+    dis_init.ble_dis_ieee_11073_20601_regulatory_certification_data_list_initial_value.data.list_len = 1;
+    dis_init.ble_dis_ieee_11073_20601_regulatory_certification_data_list_initial_value.data.p_list = m_dis_ieee_11073_20601_regulatory_certification_data_list_initial_value_data_arr; 
+    dis_init.ble_dis_pnp_id_initial_value.vendor_id_source.vendor_id_source = VENDOR_ID_SOURCE_BLUETOOTH_SIG_ASSIGNED_COMPANY_IDENTIFIER_VALUE_FROM_THE_ASSIGNED_NUMBERS_DOCUMENT; 
+    memset(&dis_init.ble_dis_pnp_id_initial_value.vendor_id,
+           0x00,
+           sizeof(dis_init.ble_dis_pnp_id_initial_value.vendor_id));
+    memset(&dis_init.ble_dis_pnp_id_initial_value.product_id,
+           0x00,
+           sizeof(dis_init.ble_dis_pnp_id_initial_value.product_id));
+    memset(&dis_init.ble_dis_pnp_id_initial_value.product_version,
+           0x00,
+           sizeof(dis_init.ble_dis_pnp_id_initial_value.product_version));
+
+    err_code = ble_dis_init(&m_dis, &dis_init);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    } 
 
     // Initialize Battery Service.
     memset(&bas_init, 0, sizeof(bas_init));
@@ -78,5 +266,8 @@ uint32_t bluetooth_init(void)
  */
 void bluetooth_on_ble_evt(ble_evt_t * p_ble_evt)
 { 
+    ble_water_meter_on_ble_evt(&m_water_meter, p_ble_evt); 
+    ble_wlan_on_ble_evt(&m_wlan, p_ble_evt); 
+    ble_dis_on_ble_evt(&m_dis, p_ble_evt); 
     ble_bas_on_ble_evt(&m_bas, p_ble_evt); 
 }

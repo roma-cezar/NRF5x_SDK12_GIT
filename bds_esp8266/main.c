@@ -37,7 +37,22 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+/*
+#include "service_if.h"
+#include <stdint.h>
+#include "ble_bas.h" 
+#include "ble_water_meter.h" 
+#include "ble_wlan_settings.h" 
 
+#include "SEGGER_RTT.h"
+
+ble_bas_t    m_bas; 
+ble_water_meter_t    m_water_meter; 
+ble_wlan_settings_t    m_wlan_settings; 
+
+extern uint8_t SSID[32];
+extern uint8_t PSWD[32];
+*/
 /** @file
  *
  * @defgroup ble_sdk_bluetooth_template_main main.c
@@ -77,6 +92,7 @@
 //#include "nrf_log.h"
 //#include "nrf_log_ctrl.h"
 #include "nrf_ble_qwr.h"
+#include "nrf_delay.h"
 
 #if defined (NRF51822)
 		#include "nrf51.h"
@@ -91,27 +107,82 @@
 
 #include "nrf_drv_gpiote.h"
 #include "nrf_drv_rtc.h"
+
 #include "service_if.h"
 #include "ble_bas.h" 
+#include "ble_water_meter.h"
+#include "ble_wlan.h" 
 
 #include "esp8266.h"
+#include "FLASH.h"
 
-#define RTC_PERIOD_US 30000000ULL
-#define BLINK_RTC 2
-#define BLINK_RTC_CC 0
-#define BLINK_RTC_TICKS   (RTC_US_TO_TICKS(RTC_PERIOD_US, RTC_DEFAULT_CONFIG_FREQUENCY))
+#include "ff.h"
+#include "diskio_blkdev.h"
+#include "nrf_block_dev_sdc.h"
+
+static FATFS fs;
+static DIR dir;
+static FILINFO fno;
+static FIL file;
+#define FILE_NAME   "LOG.TXT"
+
+#define SDC_SCK_PIN     25  ///< SDC serial clock (SCK) pin.
+#define SDC_MOSI_PIN    23  ///< SDC serial data in (DI) pin.
+#define SDC_MISO_PIN    24  ///< SDC serial data out (DO) pin.
+#define SDC_CS_PIN      22  ///< SDC chip select (CS) pin.
+
+FRESULT ff_result;
+DSTATUS disk_state = STA_NOINIT;		
+NRF_BLOCK_DEV_SDC_DEFINE(
+        m_block_dev_sdc,
+        NRF_BLOCK_DEV_SDC_CONFIG(
+                SDC_SECTOR_SIZE,
+                APP_SDCARD_CONFIG(SDC_MOSI_PIN, SDC_MISO_PIN, SDC_SCK_PIN, SDC_CS_PIN)
+         ),
+         NFR_BLOCK_DEV_INFO_CONFIG("Nordic", "SDC", "1.00")
+);
+
+#define USER_RTC 2
+#define COUNT_RTC_CC 0
+#define TIMER_RTC_CC  1
+#define COUNT_RTC_TICKS   (RTC_US_TO_TICKS(5000000ULL, RTC_DEFAULT_CONFIG_FREQUENCY)) // 5 sec
+#define TIMER_RTC_TICKS    (RTC_US_TO_TICKS(100000ULL, RTC_DEFAULT_CONFIG_FREQUENCY)) // 0.1 sec
 static nrf_drv_rtc_config_t const m_rtc_config = NRF_DRV_RTC_DEFAULT_CONFIG;
-static nrf_drv_rtc_t const m_rtc = NRF_DRV_RTC_INSTANCE(BLINK_RTC);
+static nrf_drv_rtc_t const m_rtc = NRF_DRV_RTC_INSTANCE(USER_RTC);
 
 
 uint8_t wlan_tcp_status = 0;
 uint8_t get_request[256];
+uint8_t sdc_log[256];
 uint32_t counter1 = 0;
 uint32_t counter2 = 0;
+
+bool hot_water_notify_flag = false;
+bool cold_water_notify_flag = false;
 bool send_flag = false;
+bool wlan_rdy_flag = false;
+
+extern ble_water_meter_t    m_water_meter; 
+extern ble_wlan_t    m_wlan; 
+extern ble_bas_t    m_bas; 
+
+ble_water_meter_hot_water_t 								m_water_meter_hot_water_characteristic;
+ble_water_meter_cold_water_t  							m_water_meter_cold_water_characteristic;
+ble_wlan_wlan_action_t											m_wlan_action_characteristic;
+ble_wlan_wlan_ssid_t												m_wlan_ssid_characteristic;
+ble_wlan_wlan_pass_t												m_wlan_pass_characteristic;
+
+bool wlan_update_flag = false;
+uint8_t SSID[16];
+uint8_t PSWD[16];
+uint16_t days = 0;
+uint8_t hours = 0;
+uint8_t minutes = 0;
+uint8_t seconds = 0;
+uint8_t mills = 0; // 1 imp 100 ms
+uint8_t timestamp[32] = "day: 0 time: 00:00:00.0";
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT  1                                          /**< Include or not the service_changed characteristic. if not enabled, the server's database cannot be changed for the lifetime of the device*/
-
 #if (NRF_SD_BLE_API_VERSION == 3)
 #define NRF_BLE_MAX_MTU_SIZE             GATT_MTU_SIZE_DEFAULT                      /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
 #endif
@@ -121,8 +192,8 @@ bool send_flag = false;
 
 #define DEVICE_NAME                      "Nordic_BDS"                               /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME                "NordicSemiconductor"                      /**< Manufacturer. Will be passed to Device Information Service. */
-#define APP_ADV_INTERVAL                 2000                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS       1000                                        /**< The advertising timeout in units of seconds. */
+#define APP_ADV_INTERVAL                 200                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
+#define APP_ADV_TIMEOUT_IN_SECONDS       0                                        /**< The advertising timeout in units of seconds. */
 
 #define APP_TIMER_PRESCALER              0                                          /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE          4                                          /**< Size of timer operation queues. */
@@ -153,7 +224,6 @@ static nrf_ble_qwr_t                     m_qwr;                                 
 
 // YOUR_JOB: Use UUIDs for service(s) used in your application.
 static ble_uuid_t m_adv_uuids[] = {{BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}}; /**< Universally unique service identifiers. */
-
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -359,8 +429,8 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     {
         case BLE_ADV_EVT_FAST:
             SEGGER_RTT_WriteString(0, "Fast Advertising\r\n");
-            err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
-            APP_ERROR_CHECK(err_code);
+            //err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
+            //APP_ERROR_CHECK(err_code);
             break;
         case BLE_ADV_EVT_IDLE:
             SEGGER_RTT_WriteString(0, "Idle Advertising\r\n");
@@ -379,13 +449,12 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
 static void on_ble_evt(ble_evt_t * p_ble_evt)
 {
     uint32_t err_code;
-
     switch (p_ble_evt->header.evt_id)
             {
         case BLE_GAP_EVT_CONNECTED:
             SEGGER_RTT_WriteString(0, "Connected\r\n");
-            err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-            APP_ERROR_CHECK(err_code);
+            //err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
+            //APP_ERROR_CHECK(err_code);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             break; // BLE_GAP_EVT_CONNECTED
 
@@ -709,33 +778,34 @@ static void advertising_init(void)
 }
 
 /**/
-void in_pin_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+void GPIOTE_IRQHandler(void)
+//void in_pin_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
-		uint32_t err_code;
-		//__disable_irq();
-		if( ((~NRF_GPIO->IN) >> 3) & 0x01)
+		if(NRF_GPIOTE->EVENTS_IN[0] == 1)
 		{	
-				counter1++;
+			NRF_GPIOTE->EVENTS_IN[0] = 0;
+			counter1++;
+
 		}
-		if( ((~NRF_GPIO->IN) >> 4) & 0x01 )
+		if(NRF_GPIOTE->EVENTS_IN[1] == 1)
 		{			
-				counter2++;
-		}
-		if( ((~NRF_GPIO->IN) >> 13) & 0x01)
-		{					
-				nrf_gpio_pin_clear(17);
-				SEGGER_RTT_WriteString(0, "Adverttising started!\r\n");
-				err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
-				APP_ERROR_CHECK(err_code);
-		}
-		if( ((~NRF_GPIO->IN) >> 14) & 0x01 )
-		{						
-				nrf_gpio_pin_set(17);
-				SEGGER_RTT_WriteString(0, "Adverttising stopted!\r\n");
-				uint32_t err_code = sd_ble_gap_adv_stop();
-				APP_ERROR_CHECK(err_code);
-		}
-		//__enable_irq();
+			NRF_GPIOTE->EVENTS_IN[1] = 0;
+			counter2++;
+		}	
+//		if( ((~NRF_GPIO->IN) >> 13) & 0x01)
+//		{					
+//				nrf_gpio_pin_clear(17);
+//				SEGGER_RTT_WriteString(0, "Adverttising started!\r\n");
+//				uint32_t err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
+//				APP_ERROR_CHECK(err_code);
+//		}
+//		if( ((~NRF_GPIO->IN) >> 14) & 0x01 )
+//		{						
+//				nrf_gpio_pin_set(17);
+//				SEGGER_RTT_WriteString(0, "Adverttising stopted!\r\n");
+//				uint32_t err_code = sd_ble_gap_adv_stop();
+//				APP_ERROR_CHECK(err_code);
+//		}
 }
 /**@brief Function for initializing buttons and leds.
  *
@@ -760,23 +830,26 @@ static void buttons_leds_init(bool * p_erase_bonds)
 		nrf_gpio_pin_set(19);
 		nrf_gpio_pin_set(20);
 	
-		err_code = nrf_drv_gpiote_init();
-    APP_ERROR_CHECK(err_code);
+		nrf_gpio_cfg_input(3, GPIO_PIN_CNF_PULL_Pullup);
+		nrf_gpio_cfg_input(4, GPIO_PIN_CNF_PULL_Pullup);
 	
-		nrf_drv_gpiote_in_config_t in_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(false);
-    in_config.pull = NRF_GPIO_PIN_PULLUP;
-
-    err_code = nrf_drv_gpiote_in_init(3, &in_config, in_pin_handler);
-    err_code = nrf_drv_gpiote_in_init(4, &in_config, in_pin_handler);
-    err_code = nrf_drv_gpiote_in_init(13, &in_config, in_pin_handler);
-    err_code = nrf_drv_gpiote_in_init(14, &in_config, in_pin_handler);
-    APP_ERROR_CHECK(err_code);
+//		*(volatile uint32_t *)(NRF_GPIOTE_BASE + 0x600 + (4 * 0)) = 1;
+//		*(volatile uint32_t *)(NRF_GPIOTE_BASE + 0x600 + (4 * 1)) = 1;
+	
+		NRF_GPIOTE->CONFIG[0] = GPIOTE_CONFIG_MODE_Event << GPIOTE_CONFIG_MODE_Pos |
+														3 << GPIOTE_CONFIG_PSEL_Pos												 |	
+														GPIOTE_CONFIG_POLARITY_HiToLo << GPIOTE_CONFIG_POLARITY_Pos;
 		
-		NRF_GPIOTE->EVENTS_PORT = 0;
-    nrf_drv_gpiote_in_event_enable(3, true);
-    nrf_drv_gpiote_in_event_enable(4, true);
-    nrf_drv_gpiote_in_event_enable(13, true);
-    nrf_drv_gpiote_in_event_enable(14, true);
+		NRF_GPIOTE->CONFIG[1] = GPIOTE_CONFIG_MODE_Event << GPIOTE_CONFIG_MODE_Pos |
+														4 << GPIOTE_CONFIG_PSEL_Pos												 |	
+														GPIOTE_CONFIG_POLARITY_HiToLo << GPIOTE_CONFIG_POLARITY_Pos;	
+	
+		NRF_GPIOTE->EVENTS_IN[0] = 0;
+		NRF_GPIOTE->EVENTS_IN[1] = 0;
+	
+		NRF_GPIOTE->INTENSET = GPIOTE_INTENSET_IN0_Enabled << GPIOTE_INTENSET_IN0_Pos | 
+													 GPIOTE_INTENSET_IN1_Enabled << GPIOTE_INTENSET_IN1_Pos ; 
+		//NRF_GPIOTE->POWER = 	GPIOTE_POWER_POWER_Enabled << GPIOTE_POWER_POWER_Pos;
 		NVIC_SetPriority(2, GPIOTE_IRQn);
 		NVIC_DisableIRQ(GPIOTE_IRQn);
 }
@@ -793,17 +866,159 @@ static void power_manage(void)
 static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 {
 	ret_code_t err_code;
-
-	nrf_gpio_pin_toggle(18);
 	
-	send_flag = true;
+	switch(int_type)
+	{
+		case NRF_DRV_RTC_INT_COMPARE0:
+			nrf_gpio_pin_toggle(18);
+					
+			send_flag = true;
+			err_code = nrf_drv_rtc_cc_set(
+					&m_rtc,
+					COUNT_RTC_CC,
+					(nrf_rtc_cc_get(m_rtc.p_reg, COUNT_RTC_CC) + COUNT_RTC_TICKS) & RTC_COUNTER_COUNTER_Msk,
+					true);
+			APP_ERROR_CHECK(err_code);
+			break;
+		
+		case NRF_DRV_RTC_INT_COMPARE1:
+			nrf_gpio_pin_toggle(20);
+		
+			if(++mills == 10)
+			{
+				mills = 0;
+				
+				m_water_meter_hot_water_characteristic.meters_per_cube = counter1;
+				ble_water_meter_hot_water_set(&m_water_meter, &m_water_meter_hot_water_characteristic);
+				if(hot_water_notify_flag){
+					ble_water_meter_hot_water_notify(&m_water_meter, &m_water_meter_hot_water_characteristic);
+				}
+				
+				m_water_meter_cold_water_characteristic.meters_per_cube = counter2;
+				ble_water_meter_cold_water_set(&m_water_meter, &m_water_meter_cold_water_characteristic);
+				if(cold_water_notify_flag){
+					ble_water_meter_cold_water_notify(&m_water_meter, &m_water_meter_cold_water_characteristic);
+				}
+				
+				if(++seconds == 60)
+				{
+					seconds=0;
+					if(++minutes == 60)
+					{
+						minutes = 0;
+						if(++hours == 24)
+						{
+							days++;
+							hours = 0;
+						}
+					}
+				}
+			}
+			sprintf(timestamp, "day: %d time: %.2d:%.2d:%.2d", days, hours, minutes, seconds);
+			err_code = nrf_drv_rtc_cc_set(
+					&m_rtc,
+					TIMER_RTC_CC,
+					(nrf_rtc_cc_get(m_rtc.p_reg, TIMER_RTC_CC) + TIMER_RTC_TICKS) & RTC_COUNTER_COUNTER_Msk,
+					true);
+			APP_ERROR_CHECK(err_code);
+			break;
+	}
+}
+/**/
+static bool SDC_LOG_INIT(void)
+{
+		uint8_t msg[128];
+	    // Initialize FATFS disk I/O interface by providing the block device.
+    static diskio_blkdev_t drives[] =
+    {
+            DISKIO_BLOCKDEV_CONFIG(NRF_BLOCKDEV_BASE_ADDR(m_block_dev_sdc, block_dev), NULL)
+    };
 
-	err_code = nrf_drv_rtc_cc_set(
-			&m_rtc,
-			BLINK_RTC_CC,
-			(nrf_rtc_cc_get(m_rtc.p_reg, BLINK_RTC_CC) + BLINK_RTC_TICKS) & RTC_COUNTER_COUNTER_Msk,
-			true);
-	APP_ERROR_CHECK(err_code);
+    diskio_blockdev_register(drives, ARRAY_SIZE(drives));
+
+    SEGGER_RTT_WriteString(0, "SDC: Initializing disk 0...\r\n");
+    for (uint32_t retries = 10; retries && disk_state; --retries)
+    {
+        disk_state = disk_initialize(0);
+    }
+    if (disk_state)
+    {
+        SEGGER_RTT_WriteString(0, "SDC: Disk initialization failed\r\n");
+        return 0;
+    }
+		else
+		{
+			nrf_gpio_pin_clear(19);
+		}
+    
+    uint32_t blocks_per_mb = (1024uL * 1024uL) / m_block_dev_sdc.block_dev.p_ops->geometry(&m_block_dev_sdc.block_dev)->blk_size;
+    uint32_t capacity = m_block_dev_sdc.block_dev.p_ops->geometry(&m_block_dev_sdc.block_dev)->blk_count / blocks_per_mb;
+    
+		
+		sprintf(msg, "SDC: Capacity: %d MB\r\n", capacity);
+		SEGGER_RTT_WriteString(0, msg);
+
+    SEGGER_RTT_WriteString(0, "SDC: Mounting...\r\n");
+    ff_result = f_mount(&fs, "", 1);
+    if (ff_result)
+    {
+        SEGGER_RTT_WriteString(0, "SDC: Mount failed\r\n");
+        return 0;
+    }
+		
+		ff_result = f_opendir(&dir, "/");
+    if (ff_result)
+    {
+        SEGGER_RTT_WriteString(0, "SDC: Directory listing failed!\r\n");
+        return 0;
+    }
+		
+		do
+    {
+        ff_result = f_readdir(&dir, &fno);
+        if (ff_result != FR_OK)
+        {
+            SEGGER_RTT_WriteString(0, "SDC: Directory read failed\r\n");
+            return 0;
+        }
+        
+        if (fno.fname[0])
+        {
+            if (fno.fattrib & AM_DIR)
+            {
+								sprintf(msg,	"SDC: <DIR> %s\r\n",(uint32_t)fno.fname);
+								SEGGER_RTT_WriteString(0, msg);
+            }
+            else
+            {
+                sprintf(msg, "SDC: %.9lu  %s\r\n", fno.fsize, (uint32_t)fno.fname);
+								SEGGER_RTT_WriteString(0, msg);
+            }
+        }
+    }
+    while (fno.fname[0]);
+    SEGGER_RTT_WriteString(0, "\r\n");
+		return 1;
+}
+
+/**/
+static void SDC_LOG_CLEAR(void)
+{
+		ff_result = f_open(&file, FILE_NAME, FA_READ | FA_WRITE | FA_OPEN_EXISTING);
+    ff_result = f_write(&file, "", strlen("") - 1, NULL);
+    (void) f_close(&file);
+}
+/**/
+static void SDC_LOG(uint8_t* data)
+{
+    uint32_t bytes_written;
+    ff_result = f_open(&file, FILE_NAME,  FA_READ | FA_WRITE | FA_OPEN_APPEND);
+    ff_result = f_write(&file, data, strlen(data) - 1, (UINT *) &bytes_written);
+	  if (ff_result == FR_OK)
+    {
+			nrf_gpio_pin_toggle(19);
+    }
+    (void) f_close(&file);
 }
 /**/
 static void rtc_setup(void)
@@ -811,25 +1026,35 @@ static void rtc_setup(void)
 	ret_code_t err_code;
 	err_code = nrf_drv_rtc_init(&m_rtc, &m_rtc_config, rtc_handler);
 	APP_ERROR_CHECK(err_code);
-	err_code = nrf_drv_rtc_cc_set(&m_rtc, BLINK_RTC_CC, BLINK_RTC_TICKS, true);
+	err_code = nrf_drv_rtc_cc_set(&m_rtc, COUNT_RTC_CC, COUNT_RTC_TICKS, true);
+	APP_ERROR_CHECK(err_code);
+	err_code = nrf_drv_rtc_cc_set(&m_rtc, TIMER_RTC_CC, TIMER_RTC_TICKS, true);
 	APP_ERROR_CHECK(err_code);
 	nrf_drv_rtc_enable(&m_rtc);
-	SEGGER_RTT_WriteString(0,"RTC started!\r\n");
+	SEGGER_RTT_WriteString(0, "RTC started!\r\n");
 }
 /**@brief Function for application main entry.
  */
+
 int main(void)
 {
     uint32_t err_code;
     bool erase_bonds;
+	
+		flash_read(FLASH_USER_START_ADDR, (uint32_t *)SSID, 4);
+		flash_read(FLASH_USER_START_ADDR + 4, (uint32_t *)PSWD, 4);
 
-
-    // Initialize.
-		ESP8266_Serial_Config(115200UL);
-    timers_init();
+	// Initialize.
     buttons_leds_init(&erase_bonds);
+		ESP8266_Serial_Config(115200UL);
+	
+		SDC_LOG_INIT();
+//		SDC_LOG_CLEAR();
+	
+    timers_init();
     ble_stack_init();
-    peer_manager_init(erase_bonds);
+	
+	  peer_manager_init(erase_bonds);
     if (erase_bonds == true)
     {
         SEGGER_RTT_WriteString(0, "Bonds erased!\r\n");
@@ -844,57 +1069,203 @@ int main(void)
     SEGGER_RTT_WriteString(0, "Bluetooth Dev Studio Start Advertising \r\n");
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
+		
+		// Prepare settings
+		if(strcmp((const char*)SSID, "ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ")==0 && strcmp((const char*)PSWD, "ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ")==0 &&
+			 strcmp((const char*)SSID, "")==0 								&& strcmp((const char*)PSWD, "")==0)
+		{
+			SEGGER_RTT_WriteString(0, "No SSID and PSWD in flash!\r\n");
+			wlan_rdy_flag = false;
+		}
+		else
+		{
+			m_wlan_action_characteristic.action = 0;
+			ble_wlan_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
+			
+			m_wlan_ssid_characteristic.ssid.p_str = SSID;
+			m_wlan_ssid_characteristic.ssid.length = strlen(SSID);
+			ble_wlan_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
 
-		rtc_setup();
+			m_wlan_pass_characteristic.pass.p_str = PSWD;
+			m_wlan_pass_characteristic.pass.length = strlen(PSWD);
+			ble_wlan_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
+			
+			SEGGER_RTT_WriteString(0, (const char*)"SSID: ");
+			SEGGER_RTT_WriteString(0, (const char*)SSID);
+			SEGGER_RTT_WriteString(0, (const char*)"\r\nPASS: ");
+			SEGGER_RTT_WriteString(0, (const char*)PSWD);
+			SEGGER_RTT_WriteString(0, "\r\n");	
+			wlan_rdy_flag = true;
+		}
 		
 		counter1=0;
 		counter2=0;
+		rtc_setup();
 		NVIC_EnableIRQ(GPIOTE_IRQn);
-    // Enter main loop.
-    for (;;)
+		// Main loop
+    while(true)
     {
-			if(send_flag)
+			if(wlan_update_flag)
 			{
-				memset(get_request, 0 , 256);
-				sprintf(get_request, "counter1=%d\r\n", counter1);
-				SEGGER_RTT_WriteString(0, get_request);
-
-				memset(get_request, 0 , 256);
-				sprintf(get_request, "counter2=%d\r\n\r\n", counter2);
-				SEGGER_RTT_WriteString(0, get_request);
 				
-				ESP8266_Wlan_Start("dd-wrt","bora-bora04");
+				SEGGER_RTT_WriteString(0, "Update WLAN settings...\r\n");	
+				sd_flash_page_erase(127);
+				nrf_delay_ms(20);
+				sd_flash_write(FLASH_USER_START_ADDR,(uint32_t *)SSID, 4);
+				nrf_delay_ms(20);		
+				sd_flash_write(FLASH_USER_START_ADDR + 4,(uint32_t *)PSWD, 4);
+				nrf_delay_ms(20);
+				
+				SEGGER_RTT_WriteString(0, (const char*)"SSID: ");
+				SEGGER_RTT_WriteString(0, (const char*)SSID);
+				SEGGER_RTT_WriteString(0, (const char*)"\r\nPASS: ");
+				SEGGER_RTT_WriteString(0, (const char*)PSWD);
+				SEGGER_RTT_WriteString(0, "\r\n");	
+				
+				m_wlan_action_characteristic.action = 0;
+				ble_wlan_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
+				
+				m_wlan_ssid_characteristic.ssid.p_str = SSID;
+				m_wlan_ssid_characteristic.ssid.length = strlen(SSID);
+				ble_wlan_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
+				
+				m_wlan_pass_characteristic.pass.p_str = PSWD;
+				m_wlan_pass_characteristic.pass.length = strlen(PSWD);
+				ble_wlan_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
+				
+				wlan_update_flag = false;
+				wlan_rdy_flag= true;
+				
 				wlan_tcp_status = ESP8266_Session_Status();
-				if(wlan_tcp_status == 2 || wlan_tcp_status == 4)
+				if(wlan_tcp_status == 2)
 				{
-						if(ESP8266_Session_Open("SSL", "192.168.1.252", 9443))
+					ESP8266_Wlan_Stop();
+				}
+				else if(wlan_tcp_status == 3)
+				{
+					ESP8266_Session_Close();
+					ESP8266_Wlan_Stop();
+				}	
+				SEGGER_RTT_WriteString(0, "WLAN settings updated!\r\n");	
+			}
+			if(send_flag && !wlan_update_flag)
+			{		
+//				sprintf(sdc_log, "\r\n%s counter1=%d\r\n", timestamp, counter1);
+//				SEGGER_RTT_WriteString(0, sdc_log);
+//				SDC_LOG(sdc_log);
+
+//				sprintf(sdc_log, "%s counter2=%d\r\n\r\n", timestamp, counter2);
+//				SEGGER_RTT_WriteString(0, sdc_log);
+//				SDC_LOG(sdc_log);
+
+				if(wlan_rdy_flag)
+				{
+					if(ESP8266_Preinit())
+					{
+						sprintf(sdc_log, "\r\n%s WLAN Init ok!\r\n", timestamp);
+						SDC_LOG(sdc_log);
+						if(ESP8266_Wlan_Start(SSID, PSWD))
 						{
+							sprintf(sdc_log, "%s WLAN Started! IP: %s\r\n", timestamp, ESP8266_Get_IP());
+							SDC_LOG(sdc_log);
 							wlan_tcp_status = ESP8266_Session_Status();
-							if(wlan_tcp_status == 3)
+
+							sprintf(sdc_log, "%s WLAN Status: %d\r\n", timestamp, wlan_tcp_status);
+							SDC_LOG(sdc_log);
+							
+							if(wlan_tcp_status == 2 || wlan_tcp_status == 4)
 							{
-									memset(get_request, 0 , 256);
-									sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V0?value=%d", counter1);
-									ESP8266_GET_Req(get_request);
-									
-									memset(get_request, 0 , 256);
-									sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V1?value=%d", counter2);
-									ESP8266_GET_Req(get_request);
+								sprintf(sdc_log, "%s WLAN Opening session!\r\n", timestamp);
+								SDC_LOG(sdc_log);
 								
-									ESP8266_Session_Close();
+								if(ESP8266_Session_Open("SSL", "192.168.1.252", 9443))
+								{
+									sprintf(sdc_log, "%s WLAN Session opened!\r\n", timestamp);
+									SDC_LOG(sdc_log);
+									
+									wlan_tcp_status = ESP8266_Session_Status();
+									if(wlan_tcp_status == 3)
+									{
+											sprintf(sdc_log, "%s WLAN Send data...\r\n", timestamp);
+											SDC_LOG(sdc_log);
+										
+											memset(get_request, 0 , 256);
+											sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V0?value=%d", counter1);
+											if(ESP8266_GET_Req(get_request))
+											{		
+												sprintf(sdc_log, "%s WLAN Send data OK!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+											else
+											{
+												sprintf(sdc_log, "%s WLAN Send data ERROR!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+											
+											
+											sprintf(sdc_log, "%s WLAN Send data...\r\n", timestamp);
+											SDC_LOG(sdc_log);
+											
+											memset(get_request, 0 , 256);
+											sprintf(get_request, "/22dd4423c4a34bf5b989a6342cc691d6/update/V1?value=%d", counter2);
+											if(ESP8266_GET_Req(get_request))
+											{		
+												sprintf(sdc_log, "%s WLAN Send data OK!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+											else
+											{
+												sprintf(sdc_log, "%s WLAN Send data ERROR!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+											sprintf(sdc_log, "%s WLAN Closing Session...\r\n", timestamp);
+											SDC_LOG(sdc_log);
+											if(ESP8266_Session_Close())
+											{
+												sprintf(sdc_log, "%s WLAN Session closed!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+											else
+											{
+												sprintf(sdc_log, "%s WLAN Session closing error!\r\n", timestamp);
+												SDC_LOG(sdc_log);
+											}
+										}
+									}
+								}
 							}
-						}		
+							
+							sprintf(sdc_log, "%s WLAN Stoping...\r\n", timestamp);
+							SDC_LOG(sdc_log);
+							
+							wlan_tcp_status = ESP8266_Session_Status();
+							if(wlan_tcp_status != 5)
+							{
+								if(ESP8266_Wlan_Stop())
+								{
+									sprintf(sdc_log, "%s WLAN Stopted!\r\n", timestamp);
+									SDC_LOG(sdc_log);
+								}
+								else
+								{
+									sprintf(sdc_log, "%s WLAN Stop error!\r\n", timestamp);
+									SDC_LOG(sdc_log);
+								}	
+							}
+					}					
 				}
-				else if(wlan_tcp_status == 5)
-				{
-					ESP8266_Wlan_Start("dd-wrt","bora-bora04");
-				}
-				ESP8266_Wlan_Stop();				
 				send_flag = !send_flag;
 			}
 			power_manage();
     }
 }
 
+void HardFault_Handler(void)
+{
+	SEGGER_RTT_WriteString(0, (const char*)"\r\nHard fault!\r\n");
+	sprintf(sdc_log, "%s Hard fault!\r\n", timestamp);
+	SDC_LOG(sdc_log);
+}
 /**
  * @}
  */
