@@ -81,10 +81,12 @@
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\rtc\nrf_drv_rtc.h
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\common\nrf_drv_common.h
 .\_build\main.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_rtc.h
-.\_build\main.o: ..\..\..\..\..\..\components\ble\ble_services\ble_bas\ble_bas.h
-.\_build\main.o: ..\..\..\bds\ble_water_meter.h
+.\_build\main.o: ..\..\..\bds\ble_bas.h
 .\_build\main.o: ..\..\..\..\..\..\components\libraries\util\app_util_bds.h
+.\_build\main.o: ..\..\..\bds\ble_meter.h
+.\_build\main.o: ..\..\..\bds\ble_clock.h
 .\_build\main.o: ..\..\..\bds\ble_wlan.h
+.\_build\main.o: ..\..\..\..\..\..\..\..\MyLibs\nrf52_adc.h
 .\_build\main.o: ..\..\..\..\..\..\..\..\MyLibs\ESP8266\esp8266.h
 .\_build\main.o: ..\..\..\..\..\..\..\..\MyLibs\FLASH.h
 .\_build\main.o: ..\..\..\..\..\..\external\fatfs\src\ff.h

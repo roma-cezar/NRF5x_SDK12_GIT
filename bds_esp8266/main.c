@@ -37,22 +37,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-/*
-#include "service_if.h"
-#include <stdint.h>
-#include "ble_bas.h" 
-#include "ble_water_meter.h" 
-#include "ble_wlan_settings.h" 
-
-#include "SEGGER_RTT.h"
-
-ble_bas_t    m_bas; 
-ble_water_meter_t    m_water_meter; 
-ble_wlan_settings_t    m_wlan_settings; 
-
-extern uint8_t SSID[32];
-extern uint8_t PSWD[32];
-*/
 /** @file
  *
  * @defgroup ble_sdk_bluetooth_template_main main.c
@@ -110,9 +94,11 @@ extern uint8_t PSWD[32];
 
 #include "service_if.h"
 #include "ble_bas.h" 
-#include "ble_water_meter.h"
+#include "ble_meter.h" 
+#include "ble_clock.h" 
 #include "ble_wlan.h" 
 
+#include "nrf52_adc.h"
 #include "esp8266.h"
 #include "FLASH.h"
 
@@ -162,15 +148,28 @@ bool cold_water_notify_flag = false;
 bool send_flag = false;
 bool wlan_rdy_flag = false;
 
-extern ble_water_meter_t    m_water_meter; 
-extern ble_wlan_t    m_wlan; 
-extern ble_bas_t    m_bas; 
+extern ble_bas_t    	m_bas; 
+extern ble_wlan_t    	m_wlan; 
+extern ble_meter_t    m_meter; 
+extern ble_clock_t    m_clock; 
 
-ble_water_meter_hot_water_t 								m_water_meter_hot_water_characteristic;
-ble_water_meter_cold_water_t  							m_water_meter_cold_water_characteristic;
-ble_wlan_wlan_action_t											m_wlan_action_characteristic;
-ble_wlan_wlan_ssid_t												m_wlan_ssid_characteristic;
-ble_wlan_wlan_pass_t												m_wlan_pass_characteristic;
+
+ble_bas_battery_level_t											m_ble_bas_battery_level;
+
+ble_meter_hot_t						 									m_water_meter_hot_water_characteristic;
+ble_meter_cold_t  													m_water_meter_cold_water_characteristic;
+
+ble_wlan_action_t														m_wlan_action_characteristic;
+ble_wlan_ssid_t															m_wlan_ssid_characteristic;
+ble_wlan_pass_t															m_wlan_pass_characteristic;
+
+ble_clock_hours_t														m_ble_clock_hours_characteristic;
+ble_clock_minutes_t													m_ble_clock_minutes_characteristic;
+ble_clock_seconds_t													m_ble_clock_seconds_characteristic;
+
+extern uint16_t VBAT;
+extern bool SAADC_DATAREADY_FLAG;
+bool adc_measure_flag = false;
 
 bool wlan_update_flag = false;
 uint8_t SSID[16];
@@ -180,7 +179,7 @@ uint8_t hours = 0;
 uint8_t minutes = 0;
 uint8_t seconds = 0;
 uint8_t mills = 0; // 1 imp 100 ms
-uint8_t timestamp[32] = "day: 0 time: 00:00:00.0";
+uint8_t timestamp[32] = "day: 0 time: 00:00:00";
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT  1                                          /**< Include or not the service_changed characteristic. if not enabled, the server's database cannot be changed for the lifetime of the device*/
 #if (NRF_SD_BLE_API_VERSION == 3)
@@ -190,7 +189,7 @@ uint8_t timestamp[32] = "day: 0 time: 00:00:00.0";
 #define CENTRAL_LINK_COUNT               0                                          /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT            1                                          /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define DEVICE_NAME                      "Nordic_BDS"                               /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                      "Water meter"                               /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME                "NordicSemiconductor"                      /**< Manufacturer. Will be passed to Device Information Service. */
 #define APP_ADV_INTERVAL                 200                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
 #define APP_ADV_TIMEOUT_IN_SECONDS       0                                        /**< The advertising timeout in units of seconds. */
@@ -428,12 +427,12 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     switch (ble_adv_evt)
     {
         case BLE_ADV_EVT_FAST:
-            SEGGER_RTT_WriteString(0, "Fast Advertising\r\n");
+					SEGGER_RTT_WriteString(0, "\r\nBLE: Fast Advertising\r\n");
             //err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
             //APP_ERROR_CHECK(err_code);
             break;
         case BLE_ADV_EVT_IDLE:
-            SEGGER_RTT_WriteString(0, "Idle Advertising\r\n");
+            SEGGER_RTT_WriteString(0, "\r\nBLE: Idle Advertising\r\n");
             //sleep_mode_enter();
             break;
         default:
@@ -452,20 +451,20 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     switch (p_ble_evt->header.evt_id)
             {
         case BLE_GAP_EVT_CONNECTED:
-            SEGGER_RTT_WriteString(0, "Connected\r\n");
+            SEGGER_RTT_WriteString(0, "\r\nBLE: Connected\r\n");
             //err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             //APP_ERROR_CHECK(err_code);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             break; // BLE_GAP_EVT_CONNECTED
 
         case BLE_GAP_EVT_DISCONNECTED:
-            SEGGER_RTT_WriteString(0, "Disconnected\r\n");
+            SEGGER_RTT_WriteString(0, "\r\nBLE: Disconnected\r\n");
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break; // BLE_GAP_EVT_DISCONNECTED
 
         case BLE_GATTC_EVT_TIMEOUT:
             // Disconnect on GATT Client timeout event.
-            SEGGER_RTT_WriteString(0, "GATT Client Timeout.\r\n");
+            SEGGER_RTT_WriteString(0, "\r\nBLE: GATT Client Timeout.\r\n");
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
@@ -473,7 +472,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 
         case BLE_GATTS_EVT_TIMEOUT:
             // Disconnect on GATT Server timeout event.
-            SEGGER_RTT_WriteString(0, "GATT Server Timeout.\r\n");
+            SEGGER_RTT_WriteString(0, "\r\nBLE: GATT Server Timeout.\r\n");
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
@@ -888,21 +887,31 @@ static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 			{
 				mills = 0;
 				
-				m_water_meter_hot_water_characteristic.meters_per_cube = counter1;
-				ble_water_meter_hot_water_set(&m_water_meter, &m_water_meter_hot_water_characteristic);
+				m_water_meter_hot_water_characteristic.hot = counter1;
+				ble_meter_hot_set(&m_meter, &m_water_meter_hot_water_characteristic);
 				if(hot_water_notify_flag){
-					ble_water_meter_hot_water_notify(&m_water_meter, &m_water_meter_hot_water_characteristic);
+					ble_meter_hot_notify(&m_meter, &m_water_meter_hot_water_characteristic);
 				}
 				
-				m_water_meter_cold_water_characteristic.meters_per_cube = counter2;
-				ble_water_meter_cold_water_set(&m_water_meter, &m_water_meter_cold_water_characteristic);
+				m_water_meter_cold_water_characteristic.cold = counter2;
+				ble_meter_cold_set(&m_meter, &m_water_meter_cold_water_characteristic);
 				if(cold_water_notify_flag){
-					ble_water_meter_cold_water_notify(&m_water_meter, &m_water_meter_cold_water_characteristic);
+					ble_meter_cold_notify(&m_meter, &m_water_meter_cold_water_characteristic);
 				}
+				
+				m_ble_clock_seconds_characteristic.seconds = seconds;
+				ble_clock_seconds_set(&m_clock, &m_ble_clock_seconds_characteristic);
+				
+				m_ble_clock_minutes_characteristic.minutes = minutes;
+				ble_clock_minutes_set(&m_clock, &m_ble_clock_minutes_characteristic);
+				
+				m_ble_clock_hours_characteristic.hours = hours;
+				ble_clock_hours_set(&m_clock, &m_ble_clock_hours_characteristic);
 				
 				if(++seconds == 60)
 				{
 					seconds=0;
+					adc_measure_flag = true;
 					if(++minutes == 60)
 					{
 						minutes = 0;
@@ -931,7 +940,7 @@ static bool SDC_LOG_INIT(void)
 	    // Initialize FATFS disk I/O interface by providing the block device.
     static diskio_blkdev_t drives[] =
     {
-            DISKIO_BLOCKDEV_CONFIG(NRF_BLOCKDEV_BASE_ADDR(m_block_dev_sdc, block_dev), NULL)
+      DISKIO_BLOCKDEV_CONFIG(NRF_BLOCKDEV_BASE_ADDR(m_block_dev_sdc, block_dev), NULL)
     };
 
     diskio_blockdev_register(drives, ARRAY_SIZE(drives));
@@ -1041,54 +1050,54 @@ int main(void)
     uint32_t err_code;
     bool erase_bonds;
 	
+		// READ SETTINGS FROM FLASH
 		flash_read(FLASH_USER_START_ADDR, (uint32_t *)SSID, 4);
 		flash_read(FLASH_USER_START_ADDR + 4, (uint32_t *)PSWD, 4);
 
-	// Initialize.
+	  // INITIALISE PEREPHERIALS
     buttons_leds_init(&erase_bonds);
+		SAADC_Config();
 		ESP8266_Serial_Config(115200UL);
-	
 		SDC_LOG_INIT();
-//		SDC_LOG_CLEAR();
-	
     timers_init();
+					
+		// INITIALISE BLE STACK
     ble_stack_init();
-	
 	  peer_manager_init(erase_bonds);
     if (erase_bonds == true)
     {
-        SEGGER_RTT_WriteString(0, "Bonds erased!\r\n");
+        SEGGER_RTT_WriteString(0, "BLE: Bonds erased!\r\n");
     }
     gap_params_init();
     advertising_init();
     services_init();
     conn_params_init();
 
-    // Start execution.
+    // START BLE
     application_timers_start();
-    SEGGER_RTT_WriteString(0, "Bluetooth Dev Studio Start Advertising \r\n");
+    SEGGER_RTT_WriteString(0, "BLE: Start Advertising \r\n");
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 		
-		// Prepare settings
+		// PREPARE WLAN SETTINGS
 		if(strcmp((const char*)SSID, "ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ")==0 && strcmp((const char*)PSWD, "ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ")==0 &&
 			 strcmp((const char*)SSID, "")==0 								&& strcmp((const char*)PSWD, "")==0)
 		{
-			SEGGER_RTT_WriteString(0, "No SSID and PSWD in flash!\r\n");
+			SEGGER_RTT_WriteString(0, "WLAN: No SSID and PSWD in flash!\r\n");
 			wlan_rdy_flag = false;
 		}
 		else
 		{
 			m_wlan_action_characteristic.action = 0;
-			ble_wlan_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
+			ble_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
 			
 			m_wlan_ssid_characteristic.ssid.p_str = SSID;
 			m_wlan_ssid_characteristic.ssid.length = strlen(SSID);
-			ble_wlan_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
+			ble_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
 
 			m_wlan_pass_characteristic.pass.p_str = PSWD;
 			m_wlan_pass_characteristic.pass.length = strlen(PSWD);
-			ble_wlan_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
+			ble_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
 			
 			SEGGER_RTT_WriteString(0, (const char*)"SSID: ");
 			SEGGER_RTT_WriteString(0, (const char*)SSID);
@@ -1098,44 +1107,21 @@ int main(void)
 			wlan_rdy_flag = true;
 		}
 		
+		// PREPARE COUNTER
 		counter1=0;
 		counter2=0;
 		rtc_setup();
 		NVIC_EnableIRQ(GPIOTE_IRQn);
+		
+		
+		adc_measure_flag = true;
 		// Main loop
     while(true)
     {
 			if(wlan_update_flag)
 			{
-				
-				SEGGER_RTT_WriteString(0, "Update WLAN settings...\r\n");	
-				sd_flash_page_erase(127);
-				nrf_delay_ms(20);
-				sd_flash_write(FLASH_USER_START_ADDR,(uint32_t *)SSID, 4);
-				nrf_delay_ms(20);		
-				sd_flash_write(FLASH_USER_START_ADDR + 4,(uint32_t *)PSWD, 4);
-				nrf_delay_ms(20);
-				
-				SEGGER_RTT_WriteString(0, (const char*)"SSID: ");
-				SEGGER_RTT_WriteString(0, (const char*)SSID);
-				SEGGER_RTT_WriteString(0, (const char*)"\r\nPASS: ");
-				SEGGER_RTT_WriteString(0, (const char*)PSWD);
-				SEGGER_RTT_WriteString(0, "\r\n");	
-				
-				m_wlan_action_characteristic.action = 0;
-				ble_wlan_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
-				
-				m_wlan_ssid_characteristic.ssid.p_str = SSID;
-				m_wlan_ssid_characteristic.ssid.length = strlen(SSID);
-				ble_wlan_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
-				
-				m_wlan_pass_characteristic.pass.p_str = PSWD;
-				m_wlan_pass_characteristic.pass.length = strlen(PSWD);
-				ble_wlan_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
-				
-				wlan_update_flag = false;
-				wlan_rdy_flag= true;
-				
+				// STOP WLAN IF WORKING
+				wlan_rdy_flag = false;
 				wlan_tcp_status = ESP8266_Session_Status();
 				if(wlan_tcp_status == 2)
 				{
@@ -1146,18 +1132,76 @@ int main(void)
 					ESP8266_Session_Close();
 					ESP8266_Wlan_Stop();
 				}	
-				SEGGER_RTT_WriteString(0, "WLAN settings updated!\r\n");	
+				
+				// WRITE SETTINGS IN FLASH
+				SEGGER_RTT_WriteString(0, "WLAN: Update settings...\r\n");	
+				sd_flash_page_erase(127);
+				nrf_delay_ms(20);
+				sd_flash_write(FLASH_USER_START_ADDR,(uint32_t *)SSID, 4);
+				nrf_delay_ms(20);		
+				sd_flash_write(FLASH_USER_START_ADDR + 4,(uint32_t *)PSWD, 4);
+				nrf_delay_ms(20);
+				
+				// PRINTING
+				SEGGER_RTT_WriteString(0, (const char*)"SSID: ");
+				SEGGER_RTT_WriteString(0, (const char*)SSID);
+				SEGGER_RTT_WriteString(0, (const char*)"\r\nPASS: ");
+				SEGGER_RTT_WriteString(0, (const char*)PSWD);
+				SEGGER_RTT_WriteString(0, "\r\n");	
+				
+				// UPDATE  CHARACTERISTICS
+				m_wlan_action_characteristic.action = 0;
+				ble_wlan_action_set(&m_wlan, &m_wlan_action_characteristic);
+				
+				m_wlan_ssid_characteristic.ssid.p_str = SSID;
+				m_wlan_ssid_characteristic.ssid.length = strlen(SSID);
+				ble_wlan_ssid_set(&m_wlan, &m_wlan_ssid_characteristic);
+				
+				m_wlan_pass_characteristic.pass.p_str = PSWD;
+				m_wlan_pass_characteristic.pass.length = strlen(PSWD);
+				ble_wlan_pass_set(&m_wlan, &m_wlan_pass_characteristic);
+				
+				// SET FLAGS
+				wlan_update_flag = false;
+				wlan_rdy_flag = true;
+				
+				// PRINTING
+				SEGGER_RTT_WriteString(0, "WLAN: Settings updated!\r\n");	
+			}
+			if(adc_measure_flag && !wlan_update_flag)
+			{
+					// MEASURE BAT VOLTAGE
+				  SAADC_Enable();
+					SAADC_StartMeasure();
+					while(!SAADC_DATAREADY_FLAG){};
+					SAADC_DATAREADY_FLAG = false;
+					SAADC_Disable();
+					VBAT = (VBAT * 100) / 330 ;
+					
+					// PRINTING AND LOD TO uSD CARD
+					sprintf(sdc_log, "\r\n%s VBAT=%d%%\r\n", timestamp, VBAT);
+					SEGGER_RTT_WriteString(0, sdc_log);
+					SDC_LOG(sdc_log);
+					
+					// UPDATE CHARACTERISTIC
+					m_ble_bas_battery_level.level = VBAT;
+					ble_bas_battery_level_send(&m_bas, &m_ble_bas_battery_level);
+					
+					// CLEAR MEASURE FLAG
+					adc_measure_flag = false;
 			}
 			if(send_flag && !wlan_update_flag)
-			{		
-//				sprintf(sdc_log, "\r\n%s counter1=%d\r\n", timestamp, counter1);
-//				SEGGER_RTT_WriteString(0, sdc_log);
-//				SDC_LOG(sdc_log);
+			{	
+				// PRINTING COUNTERS AND LOG TO uSD CARD
+				sprintf(sdc_log, "\r\n%s counter1=%d\r\n", timestamp, counter1);
+				SEGGER_RTT_WriteString(0, sdc_log);
+				SDC_LOG(sdc_log);
 
-//				sprintf(sdc_log, "%s counter2=%d\r\n\r\n", timestamp, counter2);
-//				SEGGER_RTT_WriteString(0, sdc_log);
-//				SDC_LOG(sdc_log);
+				sprintf(sdc_log, "%s counter2=%d\r\n\r\n", timestamp, counter2);
+				SEGGER_RTT_WriteString(0, sdc_log);
+				SDC_LOG(sdc_log);
 
+				// SEND DATA TO SERVER
 				if(wlan_rdy_flag)
 				{
 					if(ESP8266_Preinit())
@@ -1254,8 +1298,10 @@ int main(void)
 							}
 					}					
 				}
+				// CLEAR SEND FLAG
 				send_flag = !send_flag;
 			}
+			// SLEEP MODE
 			power_manage();
     }
 }

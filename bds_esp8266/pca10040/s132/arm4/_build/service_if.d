@@ -12,7 +12,7 @@
 .\_build\service_if.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble_gatt.h
 .\_build\service_if.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble_gattc.h
 .\_build\service_if.o: ..\..\..\..\..\..\components\softdevice\s132\headers\ble_gatts.h
-.\_build\service_if.o: ..\..\..\bds\ble_water_meter.h
+.\_build\service_if.o: ..\..\..\bds\ble_bas.h
 .\_build\service_if.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\_build\service_if.o: ..\..\..\..\..\..\components\ble\common\ble_srv_common.h
 .\_build\service_if.o: ..\..\..\..\..\..\components\libraries\util\app_util.h
@@ -31,8 +31,8 @@
 .\_build\service_if.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\_build\service_if.o: ..\..\..\..\..\..\components\libraries\util\nordic_common.h
 .\_build\service_if.o: ..\..\..\bds\ble_wlan.h
-.\_build\service_if.o: ..\..\..\bds\ble_bas.h
-.\_build\service_if.o: ..\..\..\bds\ble_dis.h
+.\_build\service_if.o: ..\..\..\bds\ble_meter.h
+.\_build\service_if.o: ..\..\..\bds\ble_clock.h
 .\_build\service_if.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT.h
 .\_build\service_if.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT_Conf.h
 .\_build\service_if.o: ..\config\sdk_config.h

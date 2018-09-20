@@ -1,10 +1,11 @@
 --cpu=Cortex-M4.fp
 ".\_build\main.o"
 ".\_build\ble_bas.o"
-".\_build\ble_water_meter.o"
 ".\_build\service_if.o"
-".\_build\ble_dis.o"
 ".\_build\ble_wlan.o"
+".\_build\ble_clock.o"
+".\_build\ble_meter.o"
+".\_build\nrf52_adc.o"
 ".\_build\boards.o"
 ".\_build\bsp.o"
 ".\_build\bsp_btn_ble.o"

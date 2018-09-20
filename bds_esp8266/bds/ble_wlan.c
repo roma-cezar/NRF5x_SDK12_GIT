@@ -11,25 +11,25 @@
 #define HANDLE_LENGTH 2 /**< Length of handle inside WLAN packet. */
 
 /* TODO Consider changing the max values if encoded data for characteristic/descriptor is fixed length */ 
-#define MAX_WLAN_SSID_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted WLAN SSID. */ 
-#define MAX_WLAN_PASS_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted WLAN PASS. */ 
-#define MAX_WLAN_ACTION_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted WLAN ACTION. */ 
+#define MAX_SSID_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted SSID. */ 
+#define MAX_PASS_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted PASS. */ 
+#define MAX_ACTION_LEN (BLE_L2CAP_MTU_DEF - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maximum size of a transmitted ACTION. */ 
 
-/**@brief Function for encoding WLAN SSID.
+/**@brief Function for encoding SSID.
  *
- * @param[in]   p_wlan_ssid              WLAN SSID characteristic structure to be encoded.
+ * @param[in]   p_ssid              SSID characteristic structure to be encoded.
  * @param[out]  p_encoded_buffer   Buffer where the encoded data will be written.
  *
  * @return      Size of encoded data.
  */
-static uint8_t wlan_ssid_encode(ble_wlan_wlan_ssid_t * p_wlan_ssid, uint8_t * encoded_buffer)
+static uint8_t ssid_encode(ble_wlan_ssid_t * p_ssid, uint8_t * encoded_buffer)
 {
     uint8_t len = 0; 
-    len += bds_ble_srv_utf8_str_encode(&p_wlan_ssid->ssid, &encoded_buffer[len]); 
+    len += bds_ble_srv_utf8_str_encode(&p_ssid->ssid, &encoded_buffer[len]); 
     return len;
 }
 
-/**@brief Function for decoding WLAN SSID.
+/**@brief Function for decoding SSID.
  *
  * @param[in]   data_len              Length of the field to be decoded.
  * @param[in]   p_data                Buffer where the encoded data is stored.
@@ -37,28 +37,28 @@ static uint8_t wlan_ssid_encode(ble_wlan_wlan_ssid_t * p_wlan_ssid, uint8_t * en
  *
  * @return      Length of the decoded field.
  */
-static uint8_t wlan_ssid_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_wlan_ssid_t * p_write_val)
+static uint8_t ssid_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_ssid_t * p_write_val)
 {
     uint8_t pos = 0;
     pos += bds_ble_srv_utf8_str_decode((data_len-pos), &p_data[pos], &p_write_val->ssid); 
 
     return pos;
 } 
-/**@brief Function for encoding WLAN PASS.
+/**@brief Function for encoding PASS.
  *
- * @param[in]   p_wlan_pass              WLAN PASS characteristic structure to be encoded.
+ * @param[in]   p_pass              PASS characteristic structure to be encoded.
  * @param[out]  p_encoded_buffer   Buffer where the encoded data will be written.
  *
  * @return      Size of encoded data.
  */
-static uint8_t wlan_pass_encode(ble_wlan_wlan_pass_t * p_wlan_pass, uint8_t * encoded_buffer)
+static uint8_t pass_encode(ble_wlan_pass_t * p_pass, uint8_t * encoded_buffer)
 {
     uint8_t len = 0; 
-    len += bds_ble_srv_utf8_str_encode(&p_wlan_pass->pass, &encoded_buffer[len]); 
+    len += bds_ble_srv_utf8_str_encode(&p_pass->pass, &encoded_buffer[len]); 
     return len;
 }
 
-/**@brief Function for decoding WLAN PASS.
+/**@brief Function for decoding PASS.
  *
  * @param[in]   data_len              Length of the field to be decoded.
  * @param[in]   p_data                Buffer where the encoded data is stored.
@@ -66,28 +66,28 @@ static uint8_t wlan_pass_encode(ble_wlan_wlan_pass_t * p_wlan_pass, uint8_t * en
  *
  * @return      Length of the decoded field.
  */
-static uint8_t wlan_pass_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_wlan_pass_t * p_write_val)
+static uint8_t pass_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_pass_t * p_write_val)
 {
     uint8_t pos = 0;
     pos += bds_ble_srv_utf8_str_decode((data_len-pos), &p_data[pos], &p_write_val->pass); 
 
     return pos;
 } 
-/**@brief Function for encoding WLAN ACTION.
+/**@brief Function for encoding ACTION.
  *
- * @param[in]   p_wlan_action              WLAN ACTION characteristic structure to be encoded.
+ * @param[in]   p_action              ACTION characteristic structure to be encoded.
  * @param[out]  p_encoded_buffer   Buffer where the encoded data will be written.
  *
  * @return      Size of encoded data.
  */
-static uint8_t wlan_action_encode(ble_wlan_wlan_action_t * p_wlan_action, uint8_t * encoded_buffer)
+static uint8_t action_encode(ble_wlan_action_t * p_action, uint8_t * encoded_buffer)
 {
     uint8_t len = 0; 
-    encoded_buffer[len++] = p_wlan_action->action;
+    encoded_buffer[len++] = p_action->action;
     return len;
 }
 
-/**@brief Function for decoding WLAN ACTION.
+/**@brief Function for decoding ACTION.
  *
  * @param[in]   data_len              Length of the field to be decoded.
  * @param[in]   p_data                Buffer where the encoded data is stored.
@@ -95,7 +95,7 @@ static uint8_t wlan_action_encode(ble_wlan_wlan_action_t * p_wlan_action, uint8_
  *
  * @return      Length of the decoded field.
  */
-static uint8_t wlan_action_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_wlan_action_t * p_write_val)
+static uint8_t action_decode(uint8_t data_len, uint8_t * p_data, ble_wlan_action_t * p_write_val)
 {
     uint8_t pos = 0;
     p_write_val->action = p_data[pos++]; 
@@ -132,33 +132,33 @@ static void on_disconnect(ble_wlan_t * p_wlan, ble_evt_t * p_ble_evt)
 static void on_write(ble_wlan_t * p_wlan, ble_gatts_evt_write_t * p_ble_evt)
 {
     
-    if(p_ble_evt->handle == p_wlan->wlan_ssid_handles.value_handle)
+    if(p_ble_evt->handle == p_wlan->ssid_handles.value_handle)
     {
         if(p_wlan->evt_handler != NULL)
         {
             ble_wlan_evt_t evt;
-            evt.evt_type = BLE_WLAN_WLAN_SSID_EVT_WRITE;
-            wlan_ssid_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.wlan_ssid);
+            evt.evt_type = BLE_WLAN_SSID_EVT_WRITE;
+            ssid_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.ssid);
             p_wlan->evt_handler(p_wlan, &evt);
         }
     }
-    if(p_ble_evt->handle == p_wlan->wlan_pass_handles.value_handle)
+    if(p_ble_evt->handle == p_wlan->pass_handles.value_handle)
     {
         if(p_wlan->evt_handler != NULL)
         {
             ble_wlan_evt_t evt;
-            evt.evt_type = BLE_WLAN_WLAN_PASS_EVT_WRITE;
-            wlan_pass_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.wlan_pass);
+            evt.evt_type = BLE_WLAN_PASS_EVT_WRITE;
+            pass_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.pass);
             p_wlan->evt_handler(p_wlan, &evt);
         }
     }
-    if(p_ble_evt->handle == p_wlan->wlan_action_handles.value_handle)
+    if(p_ble_evt->handle == p_wlan->action_handles.value_handle)
     {
         if(p_wlan->evt_handler != NULL)
         {
             ble_wlan_evt_t evt;
-            evt.evt_type = BLE_WLAN_WLAN_ACTION_EVT_WRITE;
-            wlan_action_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.wlan_action);
+            evt.evt_type = BLE_WLAN_ACTION_EVT_WRITE;
+            action_decode(p_ble_evt->len, p_ble_evt->data, &evt.params.action);
             p_wlan->evt_handler(p_wlan, &evt);
         }
     }
@@ -186,15 +186,15 @@ static void on_rw_authorize_request(ble_wlan_t * p_wlan, ble_gatts_evt_t * p_gat
            )
         {
         
-            if (p_auth_req->request.write.handle == p_wlan->wlan_ssid_handles.value_handle)
+            if (p_auth_req->request.write.handle == p_wlan->ssid_handles.value_handle)
             {
                 on_write(p_wlan, &p_auth_req->request.write);
             }
-            if (p_auth_req->request.write.handle == p_wlan->wlan_pass_handles.value_handle)
+            if (p_auth_req->request.write.handle == p_wlan->pass_handles.value_handle)
             {
                 on_write(p_wlan, &p_auth_req->request.write);
             }
-            if (p_auth_req->request.write.handle == p_wlan->wlan_action_handles.value_handle)
+            if (p_auth_req->request.write.handle == p_wlan->action_handles.value_handle)
             {
                 on_write(p_wlan, &p_auth_req->request.write);
             }
@@ -240,7 +240,7 @@ uint32_t ble_wlan_init(ble_wlan_t * p_wlan, const ble_wlan_init_t * p_wlan_init)
     p_wlan->conn_handle = BLE_CONN_HANDLE_INVALID;
     
     // Add a custom base UUID.
-    ble_uuid128_t bds_base_uuid = {{0xA4, 0x52, 0x38, 0xD6, 0x2D, 0xE6, 0x65, 0xB6, 0xF2, 0x4A, 0xF1, 0x10, 0x00, 0x00, 0x2B, 0x06}};
+    ble_uuid128_t bds_base_uuid = {{0x7E, 0x3D, 0x34, 0xFB, 0x87, 0x3D, 0x5E, 0x9F, 0x94, 0x44, 0x9E, 0xE6, 0x00, 0x00, 0x2A, 0x4B}};
     uint8_t       uuid_type;
     err_code = sd_ble_uuid_vs_add(&bds_base_uuid, &uuid_type);
     if (err_code != NRF_SUCCESS)
@@ -248,7 +248,7 @@ uint32_t ble_wlan_init(ble_wlan_t * p_wlan, const ble_wlan_init_t * p_wlan_init)
         return err_code;
     }
     ble_uuid.type = uuid_type;
-    ble_uuid.uuid = 0x844B;
+    ble_uuid.uuid = 0x63E7;
         
     // Add service
     err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &ble_uuid, &p_wlan->service_handle);
@@ -257,76 +257,76 @@ uint32_t ble_wlan_init(ble_wlan_t * p_wlan, const ble_wlan_init_t * p_wlan_init)
         return err_code;
     } 
 
-    // Add WLAN SSID characteristic
-    ble_wlan_wlan_ssid_t wlan_ssid_initial_value = p_wlan_init->ble_wlan_wlan_ssid_initial_value; 
+    // Add SSID characteristic
+    ble_wlan_ssid_t ssid_initial_value = p_wlan_init->ble_wlan_ssid_initial_value; 
 
-    uint8_t wlan_ssid_encoded_value[MAX_WLAN_SSID_LEN];
-    ble_add_char_params_t add_wlan_ssid_params;
-    memset(&add_wlan_ssid_params, 0, sizeof(add_wlan_ssid_params));
+    uint8_t ssid_encoded_value[MAX_SSID_LEN];
+    ble_add_char_params_t add_ssid_params;
+    memset(&add_ssid_params, 0, sizeof(add_ssid_params));
     
-    add_wlan_ssid_params.uuid                = 0x111D;
-    add_wlan_ssid_params.uuid_type           = ble_uuid.type; 
-    add_wlan_ssid_params.max_len             = MAX_WLAN_SSID_LEN;
-    add_wlan_ssid_params.init_len            = wlan_ssid_encode(&wlan_ssid_initial_value, wlan_ssid_encoded_value);
-    add_wlan_ssid_params.p_init_value        = wlan_ssid_encoded_value; 
-    add_wlan_ssid_params.char_props.read     = 1; 
-    add_wlan_ssid_params.read_access         = SEC_OPEN; 
-    add_wlan_ssid_params.char_props.write    = 1; 
-    add_wlan_ssid_params.write_access        = SEC_OPEN; 
+    add_ssid_params.uuid                = 0x4C2C;
+    add_ssid_params.uuid_type           = ble_uuid.type; 
+    add_ssid_params.max_len             = MAX_SSID_LEN;
+    add_ssid_params.init_len            = ssid_encode(&ssid_initial_value, ssid_encoded_value);
+    add_ssid_params.p_init_value        = ssid_encoded_value; 
+    add_ssid_params.char_props.read     = 1; 
+    add_ssid_params.read_access         = SEC_OPEN; 
+    add_ssid_params.char_props.write    = 1; 
+    add_ssid_params.write_access        = SEC_OPEN; 
     // 1 for variable length and 0 for fixed length.
-    add_wlan_ssid_params.is_var_len          = 1; 
+    add_ssid_params.is_var_len          = 1; 
 
-    err_code = characteristic_add(p_wlan->service_handle, &add_wlan_ssid_params, &(p_wlan->wlan_ssid_handles));
+    err_code = characteristic_add(p_wlan->service_handle, &add_ssid_params, &(p_wlan->ssid_handles));
     if (err_code != NRF_SUCCESS)
     {
         return err_code;
     } 
 
-    // Add WLAN PASS characteristic
-    ble_wlan_wlan_pass_t wlan_pass_initial_value = p_wlan_init->ble_wlan_wlan_pass_initial_value; 
+    // Add PASS characteristic
+    ble_wlan_pass_t pass_initial_value = p_wlan_init->ble_wlan_pass_initial_value; 
 
-    uint8_t wlan_pass_encoded_value[MAX_WLAN_PASS_LEN];
-    ble_add_char_params_t add_wlan_pass_params;
-    memset(&add_wlan_pass_params, 0, sizeof(add_wlan_pass_params));
+    uint8_t pass_encoded_value[MAX_PASS_LEN];
+    ble_add_char_params_t add_pass_params;
+    memset(&add_pass_params, 0, sizeof(add_pass_params));
     
-    add_wlan_pass_params.uuid                = 0xC2E8;
-    add_wlan_pass_params.uuid_type           = ble_uuid.type; 
-    add_wlan_pass_params.max_len             = MAX_WLAN_PASS_LEN;
-    add_wlan_pass_params.init_len            = wlan_pass_encode(&wlan_pass_initial_value, wlan_pass_encoded_value);
-    add_wlan_pass_params.p_init_value        = wlan_pass_encoded_value; 
-    add_wlan_pass_params.char_props.read     = 1; 
-    add_wlan_pass_params.read_access         = SEC_OPEN; 
-    add_wlan_pass_params.char_props.write    = 1; 
-    add_wlan_pass_params.write_access        = SEC_OPEN; 
+    add_pass_params.uuid                = 0xDFC7;
+    add_pass_params.uuid_type           = ble_uuid.type; 
+    add_pass_params.max_len             = MAX_PASS_LEN;
+    add_pass_params.init_len            = pass_encode(&pass_initial_value, pass_encoded_value);
+    add_pass_params.p_init_value        = pass_encoded_value; 
+    add_pass_params.char_props.read     = 1; 
+    add_pass_params.read_access         = SEC_OPEN; 
+    add_pass_params.char_props.write    = 1; 
+    add_pass_params.write_access        = SEC_OPEN; 
     // 1 for variable length and 0 for fixed length.
-    add_wlan_pass_params.is_var_len          = 1; 
+    add_pass_params.is_var_len          = 1; 
 
-    err_code = characteristic_add(p_wlan->service_handle, &add_wlan_pass_params, &(p_wlan->wlan_pass_handles));
+    err_code = characteristic_add(p_wlan->service_handle, &add_pass_params, &(p_wlan->pass_handles));
     if (err_code != NRF_SUCCESS)
     {
         return err_code;
     } 
 
-    // Add WLAN ACTION characteristic
-    ble_wlan_wlan_action_t wlan_action_initial_value = p_wlan_init->ble_wlan_wlan_action_initial_value; 
+    // Add ACTION characteristic
+    ble_wlan_action_t action_initial_value = p_wlan_init->ble_wlan_action_initial_value; 
 
-    uint8_t wlan_action_encoded_value[MAX_WLAN_ACTION_LEN];
-    ble_add_char_params_t add_wlan_action_params;
-    memset(&add_wlan_action_params, 0, sizeof(add_wlan_action_params));
+    uint8_t action_encoded_value[MAX_ACTION_LEN];
+    ble_add_char_params_t add_action_params;
+    memset(&add_action_params, 0, sizeof(add_action_params));
     
-    add_wlan_action_params.uuid                = 0x8B7C;
-    add_wlan_action_params.uuid_type           = ble_uuid.type; 
-    add_wlan_action_params.max_len             = MAX_WLAN_ACTION_LEN;
-    add_wlan_action_params.init_len            = wlan_action_encode(&wlan_action_initial_value, wlan_action_encoded_value);
-    add_wlan_action_params.p_init_value        = wlan_action_encoded_value; 
-    add_wlan_action_params.char_props.read     = 1; 
-    add_wlan_action_params.read_access         = SEC_OPEN; 
-    add_wlan_action_params.char_props.write    = 1; 
-    add_wlan_action_params.write_access        = SEC_OPEN; 
+    add_action_params.uuid                = 0x1218;
+    add_action_params.uuid_type           = ble_uuid.type; 
+    add_action_params.max_len             = MAX_ACTION_LEN;
+    add_action_params.init_len            = action_encode(&action_initial_value, action_encoded_value);
+    add_action_params.p_init_value        = action_encoded_value; 
+    add_action_params.char_props.read     = 1; 
+    add_action_params.read_access         = SEC_OPEN; 
+    add_action_params.char_props.write    = 1; 
+    add_action_params.write_access        = SEC_OPEN; 
     // 1 for variable length and 0 for fixed length.
-    add_wlan_action_params.is_var_len          = 1; 
+    add_action_params.is_var_len          = 1; 
 
-    err_code = characteristic_add(p_wlan->service_handle, &add_wlan_action_params, &(p_wlan->wlan_action_handles));
+    err_code = characteristic_add(p_wlan->service_handle, &add_action_params, &(p_wlan->action_handles));
     if (err_code != NRF_SUCCESS)
     {
         return err_code;
@@ -335,51 +335,51 @@ uint32_t ble_wlan_init(ble_wlan_t * p_wlan, const ble_wlan_init_t * p_wlan_init)
     return NRF_SUCCESS;
 }
 
-/**@brief Function for setting the WLAN SSID. */
-uint32_t ble_wlan_wlan_ssid_set(ble_wlan_t * p_wlan, ble_wlan_wlan_ssid_t * p_wlan_ssid)
+/**@brief Function for setting the SSID. */
+uint32_t ble_wlan_ssid_set(ble_wlan_t * p_wlan, ble_wlan_ssid_t * p_ssid)
 {
     ble_gatts_value_t gatts_value;
-    uint8_t encoded_value[MAX_WLAN_SSID_LEN];
+    uint8_t encoded_value[MAX_SSID_LEN];
 
     // Initialize value struct.
     memset(&gatts_value, 0, sizeof(gatts_value));
 
-    gatts_value.len     = wlan_ssid_encode(p_wlan_ssid, encoded_value);
+    gatts_value.len     = ssid_encode(p_ssid, encoded_value);
     gatts_value.offset  = 0;
     gatts_value.p_value = encoded_value;
 
-    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->wlan_ssid_handles.value_handle, &gatts_value);
+    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->ssid_handles.value_handle, &gatts_value);
 }
 
-/**@brief Function for setting the WLAN PASS. */
-uint32_t ble_wlan_wlan_pass_set(ble_wlan_t * p_wlan, ble_wlan_wlan_pass_t * p_wlan_pass)
+/**@brief Function for setting the PASS. */
+uint32_t ble_wlan_pass_set(ble_wlan_t * p_wlan, ble_wlan_pass_t * p_pass)
 {
     ble_gatts_value_t gatts_value;
-    uint8_t encoded_value[MAX_WLAN_PASS_LEN];
+    uint8_t encoded_value[MAX_PASS_LEN];
 
     // Initialize value struct.
     memset(&gatts_value, 0, sizeof(gatts_value));
 
-    gatts_value.len     = wlan_pass_encode(p_wlan_pass, encoded_value);
+    gatts_value.len     = pass_encode(p_pass, encoded_value);
     gatts_value.offset  = 0;
     gatts_value.p_value = encoded_value;
 
-    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->wlan_pass_handles.value_handle, &gatts_value);
+    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->pass_handles.value_handle, &gatts_value);
 }
 
-/**@brief Function for setting the WLAN ACTION. */
-uint32_t ble_wlan_wlan_action_set(ble_wlan_t * p_wlan, ble_wlan_wlan_action_t * p_wlan_action)
+/**@brief Function for setting the ACTION. */
+uint32_t ble_wlan_action_set(ble_wlan_t * p_wlan, ble_wlan_action_t * p_action)
 {
     ble_gatts_value_t gatts_value;
-    uint8_t encoded_value[MAX_WLAN_ACTION_LEN];
+    uint8_t encoded_value[MAX_ACTION_LEN];
 
     // Initialize value struct.
     memset(&gatts_value, 0, sizeof(gatts_value));
 
-    gatts_value.len     = wlan_action_encode(p_wlan_action, encoded_value);
+    gatts_value.len     = action_encode(p_action, encoded_value);
     gatts_value.offset  = 0;
     gatts_value.p_value = encoded_value;
 
-    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->wlan_action_handles.value_handle, &gatts_value);
+    return sd_ble_gatts_value_set(p_wlan->conn_handle, p_wlan->action_handles.value_handle, &gatts_value);
 }
 
