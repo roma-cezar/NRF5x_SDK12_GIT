@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\_build\nrf52832_xxaa.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\nrf52832_xxaa.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Wed Sep 19 14:50:26 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060528: Last Updated: Mon Sep 24 13:02:38 2018
 <BR><P>
 <H3>Maximum Stack Usage =       1272 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -451,13 +451,13 @@ Global Symbols
 <P><STRONG><a name="[63]"></a>ESP8266_AtCmd</STRONG> (Thumb, 256 bytes, Stack size 40 bytes, esp8266.o(i.ESP8266_AtCmd))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
-<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
-<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Serial_Print
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_delay_ms
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Wlan_Stop
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Wlan_Start
@@ -472,13 +472,13 @@ Global Symbols
 <P><STRONG><a name="[6a]"></a>ESP8266_GET_Req</STRONG> (Thumb, 320 bytes, Stack size 848 bytes, esp8266.o(i.ESP8266_GET_Req))
 <BR><BR>[Stack]<UL><LI>Max Depth = 1000<LI>Call Chain = ESP8266_GET_Req &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Serial_Print
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Serial_Print
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -486,10 +486,10 @@ Global Symbols
 <P><STRONG><a name="[6e]"></a>ESP8266_Get_IP</STRONG> (Thumb, 100 bytes, Stack size 544 bytes, esp8266.o(i.ESP8266_Get_IP))
 <BR><BR>[Stack]<UL><LI>Max Depth = 696<LI>Call Chain = ESP8266_Get_IP &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strncpy
+<BR>[Calls]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strncpy
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Wlan_Start
 <LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -498,11 +498,11 @@ Global Symbols
 <P><STRONG><a name="[70]"></a>ESP8266_Preinit</STRONG> (Thumb, 212 bytes, Stack size 528 bytes, esp8266.o(i.ESP8266_Preinit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 680<LI>Call Chain = ESP8266_Preinit &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_delay_ms
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -532,10 +532,10 @@ Global Symbols
 <P><STRONG><a name="[74]"></a>ESP8266_Session_Close</STRONG> (Thumb, 108 bytes, Stack size 520 bytes, esp8266.o(i.ESP8266_Session_Close))
 <BR><BR>[Stack]<UL><LI>Max Depth = 672<LI>Call Chain = ESP8266_Session_Close &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -543,11 +543,11 @@ Global Symbols
 <P><STRONG><a name="[75]"></a>ESP8266_Session_Open</STRONG> (Thumb, 298 bytes, Stack size 600 bytes, esp8266.o(i.ESP8266_Session_Open))
 <BR><BR>[Stack]<UL><LI>Max Depth = 752<LI>Call Chain = ESP8266_Session_Open &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -555,11 +555,11 @@ Global Symbols
 <P><STRONG><a name="[76]"></a>ESP8266_Session_Status</STRONG> (Thumb, 164 bytes, Stack size 584 bytes, esp8266.o(i.ESP8266_Session_Status))
 <BR><BR>[Stack]<UL><LI>Max Depth = 736<LI>Call Chain = ESP8266_Session_Status &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strstr
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -567,11 +567,11 @@ Global Symbols
 <P><STRONG><a name="[77]"></a>ESP8266_Wlan_Start</STRONG> (Thumb, 232 bytes, Stack size 568 bytes, esp8266.o(i.ESP8266_Wlan_Start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 1264<LI>Call Chain = ESP8266_Wlan_Start &rArr; ESP8266_Get_IP &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Get_IP
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -579,9 +579,9 @@ Global Symbols
 <P><STRONG><a name="[78]"></a>ESP8266_Wlan_Stop</STRONG> (Thumb, 94 bytes, Stack size 520 bytes, esp8266.o(i.ESP8266_Wlan_Stop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 672<LI>Call Chain = ESP8266_Wlan_Stop &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_AtCmd
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -592,9 +592,9 @@ Global Symbols
 <P><STRONG><a name="[5]"></a>HardFault_Handler</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, main.o(i.HardFault_Handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = HardFault_Handler &rArr; SDC_LOG &rArr; f_open &rArr; follow_path &rArr; dir_find &rArr; dir_next &rArr; create_chain &rArr; put_fat &rArr; move_window &rArr; sync_window &rArr; disk_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDC_LOG
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> arm_startup_nrf52.o(RESET)
 </UL>
@@ -673,8 +673,8 @@ Global Symbols
 <P><STRONG><a name="[67]"></a>SEGGER_RTT_WriteString</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, segger_rtt.o(i.SEGGER_RTT_WriteString))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_wlan_evt
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;on_meter_evt
@@ -811,16 +811,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_fault_handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
-<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_write
-<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_read
-<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_identification
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_init
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_block_write
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_block_read
-<LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_handler
-<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_on_ble_evt
+<BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_on_ble_evt
 <LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[214]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timers_init
 <LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;services_init
@@ -839,13 +830,22 @@ Global Symbols
 <LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timeout_handler_exec
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;intern_softdevice_events_execute
 <LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SWI2_EGU2_IRQHandler
+<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
+<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
+<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_write
+<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_read
+<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_identification
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_init
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_block_write
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_block_read
+<LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_handler
 </UL>
 
 <P><STRONG><a name="[bc]"></a>app_sdc_block_read</STRONG> (Thumb, 136 bytes, Stack size 32 bytes, app_sdcard.o(i.app_sdc_block_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = app_sdc_block_read &rArr; sdc_cmd &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;block_dev_sdc_read_req
 </UL>
@@ -853,8 +853,8 @@ Global Symbols
 <P><STRONG><a name="[be]"></a>app_sdc_block_write</STRONG> (Thumb, 192 bytes, Stack size 24 bytes, app_sdcard.o(i.app_sdc_block_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = app_sdc_block_write &rArr; sdc_cmd &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;block_dev_sdc_write_req
 </UL>
@@ -873,11 +873,11 @@ Global Symbols
 <P><STRONG><a name="[bf]"></a>app_sdc_init</STRONG> (Thumb, 242 bytes, Stack size 48 bytes, app_sdcard.o(i.app_sdc_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = app_sdc_init &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
-<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_spi_transfer
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_spi_init
+<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
+<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg
 </UL>
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;block_dev_sdc_init
 </UL>
@@ -885,8 +885,8 @@ Global Symbols
 <P><STRONG><a name="[c4]"></a>app_sdc_uninit</STRONG> (Thumb, 78 bytes, Stack size 24 bytes, app_sdcard.o(i.app_sdc_uninit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = app_sdc_uninit &rArr; nrf_gpio_cfg
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg
-<LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_spi_uninit
+<BR>[Calls]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_spi_uninit
+<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg
 </UL>
 <BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;block_dev_sdc_uninit
@@ -969,9 +969,9 @@ Global Symbols
 <P><STRONG><a name="[b9]"></a>ble_advertising_init</STRONG> (Thumb, 318 bytes, Stack size 32 bytes, ble_advertising.o(i.ble_advertising_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = ble_advertising_init &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advdata_set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;advertising_init
 </UL>
@@ -1021,9 +1021,9 @@ Global Symbols
 <P><STRONG><a name="[f6]"></a>ble_bas_init</STRONG> (Thumb, 222 bytes, Stack size 96 bytes, ble_bas.o(i.ble_bas_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = ble_bas_init &rArr; characteristic_add
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;characteristic_add
+<BR>[Calls]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;characteristic_add
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;battery_level_encode
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bluetooth_init
 </UL>
@@ -1053,8 +1053,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;seconds_encode
 <LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;minutes_encode
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hours_encode
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;characteristic_add
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bluetooth_init
 </UL>
@@ -1268,8 +1268,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hot_encode
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cold_encode
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;characteristic_add
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bluetooth_init
 </UL>
@@ -1314,9 +1314,9 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssid_encode
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pass_encode
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;action_encode
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;characteristic_add
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bluetooth_init
 </UL>
@@ -1351,12 +1351,12 @@ Global Symbols
 <P><STRONG><a name="[144]"></a>bluetooth_init</STRONG> (Thumb, 176 bytes, Stack size 72 bytes, service_if.o(i.bluetooth_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = bluetooth_init &rArr; ble_wlan_init &rArr; characteristic_add
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_init
+<BR>[Calls]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_init
 <LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_srv_ascii_to_utf8
 <LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_meter_init
 <LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_clock_init
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_bas_init
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[216]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;services_init
 </UL>
@@ -1391,8 +1391,8 @@ Global Symbols
 <P><STRONG><a name="[f7]"></a>characteristic_add</STRONG> (Thumb, 456 bytes, Stack size 80 bytes, ble_srv_common.o(i.characteristic_add))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = characteristic_add
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_security_req
+<BR>[Calls]<UL><LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_security_req
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_init
 <LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_meter_init
@@ -1436,10 +1436,10 @@ Global Symbols
 <P><STRONG><a name="[187]"></a>disk_write</STRONG> (Thumb, 228 bytes, Stack size 48 bytes, diskio_blkdev.o(i.disk_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = disk_write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
 <LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[88]"></a>diskio_blockdev_register</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, diskio_blkdev.o(i.diskio_blockdev_register))
@@ -1449,8 +1449,8 @@ Global Symbols
 <P><STRONG><a name="[86]"></a>f_close</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, ff.o(i.f_close))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = f_close &rArr; f_sync &rArr; sync_fs &rArr; sync_window &rArr; disk_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate
+<BR>[Calls]<UL><LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;validate
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 <BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDC_LOG
 </UL>
@@ -1557,8 +1557,7 @@ Global Symbols
 <P><STRONG><a name="[196]"></a>fds_init</STRONG> (Thumb, 174 bytes, Stack size 56 bytes, fds.o(i.fds_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 264<LI>Call Chain = fds_init &rArr; queue_start &rArr; queue_process &rArr;  queue_process (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[199]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fs_init
+<BR>[Calls]<UL><LI><a href="#[199]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fs_init
 <LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;queue_start
 <LI><a href="#[19a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pages_init
 <LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;op_enqueue
@@ -1566,6 +1565,7 @@ Global Symbols
 <LI><a href="#[192]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flag_is_set
 <LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flag_clear
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;event_send
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[26a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pds_init
 </UL>
@@ -1881,8 +1881,8 @@ Global Symbols
 <P><STRONG><a name="[1ea]"></a>im_address_resolve</STRONG> (Thumb, 76 bytes, Stack size 24 bytes, id_manager.o(i.im_address_resolve))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = im_address_resolve &rArr; ah
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ah
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ah
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_ble_evt_handler
 </UL>
@@ -1898,14 +1898,14 @@ Global Symbols
 <P><STRONG><a name="[1ec]"></a>im_ble_evt_handler</STRONG> (Thumb, 206 bytes, Stack size 80 bytes, id_manager.o(i.im_ble_evt_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = im_ble_evt_handler &rArr; pds_peer_data_iterate &rArr; fds_record_find_by_key &rArr; record_find &rArr; record_find_next
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
+<BR>[Calls]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
 <LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pds_peer_data_iterate_prepare
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pds_peer_data_iterate
 <LI><a href="#[1ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;new_connection
 <LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_new_peer_id
 <LI><a href="#[1ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_address_resolve
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;addr_compare
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pm_on_ble_evt
 </UL>
@@ -1931,9 +1931,9 @@ Global Symbols
 <P><STRONG><a name="[1f4]"></a>im_is_duplicate_bonding_data</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, id_manager.o(i.im_is_duplicate_bonding_data))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = im_is_duplicate_bonding_data &rArr; addr_compare &rArr; memcmp
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
-<LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_valid_irk
+<BR>[Calls]<UL><LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;is_valid_irk
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;addr_compare
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_pdb_evt_handler
 </UL>
@@ -1946,8 +1946,8 @@ Global Symbols
 <P><STRONG><a name="[1f6]"></a>im_master_ids_compare</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, id_manager.o(i.im_master_ids_compare))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = im_master_ids_compare &rArr; memcmp
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
-<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_master_id_is_valid
+<BR>[Calls]<UL><LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_master_id_is_valid
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;memcmp
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_master_id
 <LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sec_info_request_process
@@ -2036,11 +2036,7 @@ Global Symbols
 <P><STRONG><a name="[32]"></a>main</STRONG> (Thumb, 1830 bytes, Stack size 8 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 1272<LI>Call Chain = main &rArr; ESP8266_Wlan_Start &rArr; ESP8266_Get_IP &rArr; ESP8266_AtCmd &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
-<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
-<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[213]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_read
+<BR>[Calls]<UL><LI><a href="#[213]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_read
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_ssid_set
 <LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_pass_set
 <LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_wlan_action_set
@@ -2075,6 +2071,10 @@ Global Symbols
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;advertising_init
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDC_LOG_INIT
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDC_LOG
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<LI><a href="#[218]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
@@ -2409,11 +2409,11 @@ Global Symbols
 <P><STRONG><a name="[25c]"></a>pds_peer_data_read</STRONG> (Thumb, 136 bytes, Stack size 48 bytes, peer_data_storage.o(i.pds_peer_data_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = pds_peer_data_read &rArr; peer_data_find &rArr; fds_record_find &rArr; record_find &rArr; record_find_next
 </UL>
-<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fds_record_open
+<BR>[Calls]<UL><LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fds_record_open
 <LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fds_record_close
 <LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;peer_data_id_is_valid
 <LI><a href="#[272]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;peer_data_find
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_peer_data_ptr_get
 </UL>
@@ -2595,20 +2595,20 @@ Global Symbols
 <P><STRONG><a name="[0]"></a>pm_gcm_evt_handler</STRONG> (Thumb, 190 bytes, Stack size 32 bytes, peer_manager.o(i.pm_gcm_evt_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = pm_gcm_evt_handler &rArr; evt_send
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_conn_handle_get
+<BR>[Calls]<UL><LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_conn_handle_get
 <LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> gatt_cache_manager.o(.data)
 </UL>
 <P><STRONG><a name="[49]"></a>pm_im_evt_handler</STRONG> (Thumb, 82 bytes, Stack size 32 bytes, peer_manager.o(i.pm_im_evt_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 392<LI>Call Chain = pm_im_evt_handler &rArr; pm_peer_delete &rArr; im_peer_free &rArr; pdb_peer_free &rArr; pds_peer_id_free &rArr; peer_data_delete &rArr; fds_file_delete &rArr; queue_start &rArr; queue_process &rArr;  queue_process (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_conn_handle
+<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_conn_handle
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_set
 <LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
 <LI><a href="#[284]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pm_peer_delete
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> id_manager.o(.constdata)
 </UL>
@@ -2695,11 +2695,11 @@ Global Symbols
 <P><STRONG><a name="[4c]"></a>pm_pdb_evt_handler</STRONG> (Thumb, 440 bytes, Stack size 56 bytes, peer_manager.o(i.pm_pdb_evt_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = pm_pdb_evt_handler &rArr; pdb_next_peer_id_get &rArr; pds_next_peer_id_get &rArr; peer_id_get_next_used &rArr; next_id_get &rArr; pm_mutex_lock_status_get
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[1e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_next_peer_id_get
+<BR>[Calls]<UL><LI><a href="#[1e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_next_peer_id_get
 <LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_conn_handle_get
 <LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
 <LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_next_deleted_peer_id_get
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> peer_database.o(.constdata)
 </UL>
@@ -2736,11 +2736,11 @@ Global Symbols
 <P><STRONG><a name="[53]"></a>pm_sm_evt_handler</STRONG> (Thumb, 424 bytes, Stack size 48 bytes, peer_manager.o(i.pm_sm_evt_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = pm_sm_evt_handler &rArr; ble_conn_state_user_flag_set &rArr; sdk_mapped_flags_update_by_key &rArr; sdk_mapped_flags_bulk_update_by_key
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_conn_handle
+<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_conn_handle
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_set
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_get
 <LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;evt_send
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> security_manager.o(.constdata)
 </UL>
@@ -2773,8 +2773,8 @@ Global Symbols
 <P><STRONG><a name="[110]"></a>sdk_mapped_flags_key_list_get</STRONG> (Thumb, 66 bytes, Stack size 40 bytes, sdk_mapped_flags.o(i.sdk_mapped_flags_key_list_get))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = sdk_mapped_flags_key_list_get
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_get_by_index
+<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_get_by_index
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_conn_handles
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_purge_disconnected
@@ -2875,9 +2875,7 @@ Global Symbols
 <P><STRONG><a name="[2b0]"></a>smd_params_reply</STRONG> (Thumb, 284 bytes, Stack size 88 bytes, security_dispatcher.o(i.smd_params_reply))
 <BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = smd_params_reply &rArr; sec_proc_start &rArr; im_peer_free &rArr; pdb_peer_free &rArr; pds_peer_id_free &rArr; peer_data_delete &rArr; fds_file_delete &rArr; queue_start &rArr; queue_process &rArr;  queue_process (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
-<LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_write_buf_get
+<BR>[Calls]<UL><LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_write_buf_get
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_peer_id_get_by_conn_handle
 <LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_role
 <LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pdb_write_buf_store_prepare
@@ -2885,6 +2883,8 @@ Global Symbols
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;im_ble_addr_get
 <LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sec_start_send
 <LI><a href="#[207]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sec_proc_start
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
 <BR>[Called By]<UL><LI><a href="#[251]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smd_params_reply_perform
 </UL>
@@ -2947,11 +2947,11 @@ Local Symbols
 <P><STRONG><a name="[79]"></a>SDC_LOG</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, main.o(i.SDC_LOG))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = SDC_LOG &rArr; f_open &rArr; follow_path &rArr; dir_find &rArr; dir_next &rArr; create_chain &rArr; put_fat &rArr; move_window &rArr; sync_window &rArr; disk_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
+<BR>[Calls]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_close
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_toggle
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
@@ -2960,14 +2960,14 @@ Local Symbols
 <P><STRONG><a name="[87]"></a>SDC_LOG_INIT</STRONG> (Thumb, 308 bytes, Stack size 144 bytes, main.o(i.SDC_LOG_INIT))
 <BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = SDC_LOG_INIT &rArr; f_opendir &rArr; follow_path &rArr; dir_find &rArr; dir_next &rArr; create_chain &rArr; put_fat &rArr; move_window &rArr; sync_window &rArr; disk_write
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
-<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
+<BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_opendir
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_mount
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;diskio_blockdev_register
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_initialize
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -2975,10 +2975,10 @@ Local Symbols
 <P><STRONG><a name="[b8]"></a>advertising_init</STRONG> (Thumb, 106 bytes, Stack size 112 bytes, main.o(i.advertising_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = advertising_init &rArr; ble_advertising_init &rArr; ble_advdata_set &rArr; adv_data_encode &rArr; uuid_list_encode &rArr; uuid_list_sized_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advertising_init
+<BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_advertising_init
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -3034,9 +3034,9 @@ Local Symbols
 <P><STRONG><a name="[15e]"></a>conn_params_init</STRONG> (Thumb, 82 bytes, Stack size 40 bytes, main.o(i.conn_params_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = conn_params_init &rArr; ble_conn_params_init &rArr; app_timer_create
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_params_init
+<BR>[Calls]<UL><LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_params_init
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -3167,8 +3167,7 @@ Local Symbols
 <P><STRONG><a name="[47]"></a>rtc_handler</STRONG> (Thumb, 380 bytes, Stack size 24 bytes, main.o(i.rtc_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = rtc_handler &rArr; ble_meter_hot_notify &rArr; hot_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
-<LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_rtc_cc_set
+<BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_drv_rtc_cc_set
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_meter_hot_set
 <LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_meter_hot_notify
 <LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_meter_cold_set
@@ -3179,6 +3178,7 @@ Local Symbols
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 <LI><a href="#[299]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_rtc_cc_get
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_toggle
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.rtc_setup)
 </UL>
@@ -3270,9 +3270,9 @@ Local Symbols
 <P><STRONG><a name="[3d]"></a>on_wlan_evt</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, service_if.o(i.on_wlan_evt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = on_wlan_evt &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> service_if.o(i.bluetooth_init)
 </UL>
@@ -3604,8 +3604,8 @@ Local Symbols
 <P><STRONG><a name="[b1]"></a>manuf_specific_data_encode</STRONG> (Thumb, 118 bytes, Stack size 24 bytes, ble_advdata.o(i.manuf_specific_data_encode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = manuf_specific_data_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
+<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adv_data_encode
 </UL>
@@ -3619,8 +3619,8 @@ Local Symbols
 <P><STRONG><a name="[b2]"></a>service_data_encode</STRONG> (Thumb, 150 bytes, Stack size 32 bytes, ble_advdata.o(i.service_data_encode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = service_data_encode
 </UL>
-<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
-<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
+<BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uint16_encode
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adv_data_encode
 </UL>
@@ -3806,9 +3806,9 @@ Local Symbols
 <P><STRONG><a name="[115]"></a>record_purge_disconnected</STRONG> (Thumb, 62 bytes, Stack size 48 bytes, ble_conn_state.o(i.record_purge_disconnected))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = record_purge_disconnected &rArr; record_invalidate &rArr; sdk_mapped_flags_bulk_update_by_key
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_key_list_get
+<BR>[Calls]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_key_list_get
 <LI><a href="#[295]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_invalidate
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_on_ble_evt
 </UL>
@@ -3843,12 +3843,12 @@ Local Symbols
 <P><STRONG><a name="[d4]"></a>apply_pending_flags_check</STRONG> (Thumb, 82 bytes, Stack size 56 bytes, gatt_cache_manager.o(i.apply_pending_flags_check))
 <BR><BR>[Stack]<UL><LI>Max Depth = 312<LI>Call Chain = apply_pending_flags_check &rArr; local_db_apply_in_evt &rArr; gscm_local_db_cache_apply &rArr; pdb_peer_data_ptr_get &rArr; pds_peer_data_read &rArr; peer_data_find &rArr; fds_record_find &rArr; record_find &rArr; record_find_next
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_any_set
+<BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_any_set
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;local_db_apply_in_evt
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_get
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_collection
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_conn_handles
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gcm_ble_evt_handler
 </UL>
@@ -3908,12 +3908,12 @@ Local Symbols
 <P><STRONG><a name="[1d5]"></a>service_changed_pending_flags_check</STRONG> (Thumb, 98 bytes, Stack size 56 bytes, gatt_cache_manager.o(i.service_changed_pending_flags_check))
 <BR><BR>[Stack]<UL><LI>Max Depth = 488<LI>Call Chain = service_changed_pending_flags_check &rArr; service_changed_send_in_evt &rArr; gscm_db_change_notification_done &rArr; pdb_raw_store &rArr; pds_peer_data_store &rArr; fds_record_write_reserved &rArr; write_enqueue &rArr; queue_start &rArr; queue_process &rArr;  queue_process (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;service_changed_send_in_evt
+<BR>[Calls]<UL><LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;service_changed_send_in_evt
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_any_set
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_get
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_collection
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_conn_handles
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gcm_local_database_has_changed
 <LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gcm_gscm_evt_handler
@@ -3936,12 +3936,12 @@ Local Symbols
 <P><STRONG><a name="[1d4]"></a>update_pending_flags_check</STRONG> (Thumb, 82 bytes, Stack size 56 bytes, gatt_cache_manager.o(i.update_pending_flags_check))
 <BR><BR>[Stack]<UL><LI>Max Depth = 520<LI>Call Chain = update_pending_flags_check &rArr; local_db_update_in_evt &rArr; gscm_local_db_cache_update &rArr; pdb_write_buf_store &rArr; pds_peer_data_store &rArr; fds_record_write_reserved &rArr; write_enqueue &rArr; queue_start &rArr; queue_process &rArr;  queue_process (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_any_set
+<BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdk_mapped_flags_any_set
 <LI><a href="#[1d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;local_db_update_in_evt
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_get
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_user_flag_collection
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ble_conn_state_conn_handles
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gcm_ble_evt_handler
 </UL>
@@ -5169,8 +5169,8 @@ Local Symbols
 <P><STRONG><a name="[193]"></a>op_enqueue</STRONG> (Thumb, 156 bytes, Stack size 32 bytes, fds.o(i.op_enqueue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = op_enqueue
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[24b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chunk_queue_next
+<BR>[Calls]<UL><LI><a href="#[24b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chunk_queue_next
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[195]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fds_gc
 <LI><a href="#[196]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fds_init
@@ -5815,8 +5815,7 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_window
 <LI><a href="#[185]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_read
 </UL>
-<BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
+<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;put_fat
 <LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_fat
 <LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_volume
@@ -5825,6 +5824,7 @@ Local Symbols
 <LI><a href="#[16f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_find
 <LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dir_alloc
 <LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_fs
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[165]"></a>put_fat</STRONG> (Thumb, 312 bytes, Stack size 32 bytes, ff.o(i.put_fat))
@@ -5853,22 +5853,22 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[188]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;st_word
 </UL>
-<BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
+<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[181]"></a>st_dword</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, ff.o(i.st_dword))
-<BR><BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
+<BR><BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_open
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;put_fat
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[188]"></a>st_word</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, ff.o(i.st_word))
-<BR><BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs
+<BR><BR>[Called By]<UL><LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sync_fs
 <LI><a href="#[183]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;st_clust
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;put_fat
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[189]"></a>sync_fs</STRONG> (Thumb, 134 bytes, Stack size 16 bytes, ff.o(i.sync_fs))
@@ -5899,10 +5899,10 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disk_status
 </UL>
-<BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
+<BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_write
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_readdir
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_close
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;f_sync
 </UL>
 
 <P><STRONG><a name="[59]"></a>block_dev_sdc_geometry</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, nrf_block_dev_sdc.o(i.block_dev_sdc_geometry))
@@ -5950,8 +5950,8 @@ Local Symbols
 <P><STRONG><a name="[3b]"></a>sdc_handler</STRONG> (Thumb, 226 bytes, Stack size 32 bytes, nrf_block_dev_sdc.o(i.sdc_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = sdc_handler &rArr; app_error_handler_bare
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_info_get
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_info_get
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> nrf_block_dev_sdc.o(i.block_dev_sdc_init)
 </UL>
@@ -6003,10 +6003,10 @@ Local Symbols
 <P><STRONG><a name="[29f]"></a>sdc_pt_identification</STRONG> (Thumb, 1256 bytes, Stack size 48 bytes, app_sdcard.o(i.sdc_pt_identification))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = sdc_pt_identification &rArr; sdc_pt_sub_data_read &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_sub_data_read
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_sub_data_read
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
 <LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_calculate_size
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 </UL>
 <BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
 </UL>
@@ -6014,9 +6014,9 @@ Local Symbols
 <P><STRONG><a name="[2a2]"></a>sdc_pt_read</STRONG> (Thumb, 256 bytes, Stack size 40 bytes, app_sdcard.o(i.sdc_pt_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = sdc_pt_read &rArr; sdc_pt_sub_data_read &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_sub_data_read
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_sub_data_read
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 </UL>
 <BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
 </UL>
@@ -6033,9 +6033,9 @@ Local Symbols
 <P><STRONG><a name="[2a3]"></a>sdc_pt_write</STRONG> (Thumb, 868 bytes, Stack size 32 bytes, app_sdcard.o(i.sdc_pt_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = sdc_pt_write &rArr; sdc_cmd &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_cmd
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 </UL>
 <BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_handler
 </UL>
@@ -6055,13 +6055,13 @@ Local Symbols
 <P><STRONG><a name="[37]"></a>spi_handler</STRONG> (Thumb, 638 bytes, Stack size 32 bytes, app_sdcard.o(i.spi_handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248<LI>Call Chain = spi_handler &rArr; sdc_pt_identification &rArr; sdc_pt_sub_data_read &rArr; sdc_spi_transfer &rArr; nrf_drv_spi_transfer &rArr; nrf_drv_spi_xfer &rArr; spim_xfer &rArr; nrf_spim_event_clear
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
+<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_spi_transfer
 <LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_write
 <LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_read
 <LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sdc_pt_identification
 <LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_sdc_uninit
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler_bare
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app_sdcard.o(i.app_sdc_init)
 </UL>

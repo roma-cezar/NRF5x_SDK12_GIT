@@ -1058,7 +1058,7 @@ int main(void)
     buttons_leds_init(&erase_bonds);
 		SAADC_Config();
 		ESP8266_Serial_Config(115200UL);
-		SDC_LOG_INIT();
+//		SDC_LOG_INIT();
     timers_init();
 					
 		// INITIALISE BLE STACK
